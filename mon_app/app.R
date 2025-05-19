@@ -1,15 +1,13 @@
 library(shiny)
 library(leaflet)
-#library(leaflet.extras)
 
 library(RColorBrewer)
 library(shinydashboard)
-#library(shinyWidgets)
-#library(shinyjs)
 
 # Masting data
 options(encoding="latin1")
 masting <- read.csv("merged.csv",sep=";")
+
 # UI
 ui <- bootstrapPage(
 
