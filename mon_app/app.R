@@ -28,8 +28,6 @@ ui <- bootstrapPage(
       draggable = TRUE, top = 10, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("histCentile", height = 250),
-      uiOutput("titre_table"),
-      tableOutput("data_masting_variable"),
     )
 
   ),
