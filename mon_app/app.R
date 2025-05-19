@@ -92,14 +92,16 @@ pal <- colorNumeric(
     # Use leaflet() here, and only include aspects of the map that
     # won't need to change dynamically (at least, not unless the
     # entire map is being torn down and recreated).
-    leaflet(masting) %>% addTiles(options = tileOptions(minZoom = 0, maxZoom = 25)) %>%
-    fitBounds(~min(Longitude), ~min(Latitude), ~max(Longitude), ~max(Latitude))
+    leaflet(filteredData()) %>% addTiles(options = tileOptions(minZoom = 0, maxZoom = 25)) %>%
+    fitBounds(~min(Longitude) - 0.001 , ~min(Latitude) - 0.001, ~max(Longitude) + 0.001 , ~max(Latitude) + 0.001)
   })
 
 
   # This will be used for the map.
   filteredData <- reactive({
-    masting[masting$Year >= input$range[1] & masting$Year <= input$range[2], ]
+    masting[masting$Year >= input$range[1]
+    & masting$Year <= input$range[2]
+    & masting$Site %in% input$select_sites, ]
   })
 
   observe({
