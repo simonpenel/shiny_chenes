@@ -23,16 +23,24 @@ ui <- bootstrapPage(
     "html, body {width:100%;height:100%}
     #controls { background-color: #ddd; opacity: 0.85;"
   ),
+
   leafletOutput("map", width = "100%", height = "100%"),
-  absolutePanel(top = 10, left = 60, width = 400, class = "panel panel-default", draggable = TRUE,
+  absolutePanel(bottom = 10, left = 10, width = 400, class = "panel panel-default", draggable = TRUE,
 
 
-    prettyCheckboxGroup("select_sites", "Sites", choices = sites, selected=sites,status="primary"),
+    #prettyCheckboxGroup("select_sites", "Sites", choices = sites, selected=sites,status="primary"),
 
-    downloadButton("download"),
+    #downloadButton("download"),
 
     sliderInput("range", "Year", min(masting$Year), max(masting$Year),
       value = range(masting$Year), step = 1, sep ="", width=600
+    ),
+
+    absolutePanel( class = "panel panel-default", fixed = TRUE,
+      draggable = TRUE, top = 100, left = 10, bottom = "auto",
+      width = 120, height = "auto",
+      prettyCheckboxGroup("select_sites", "Sites", choices = sites, selected=sites,status="primary"),
+
     ),
 
     absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
