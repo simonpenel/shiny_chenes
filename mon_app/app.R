@@ -4,6 +4,9 @@ library(leaflet)
 library(RColorBrewer)
 library(shinydashboard)
 
+library(shinyWidgets)
+library(shinyjs)
+
 # Masting data
 options(encoding="latin1")
 
@@ -22,6 +25,9 @@ ui <- bootstrapPage(
   ),
   leafletOutput("map", width = "100%", height = "100%"),
   absolutePanel(top = 10, left = 60, width = 400, class = "panel panel-default", draggable = TRUE,
+
+
+    prettyCheckboxGroup("select_sites", "Sites", choices = sites, selected=sites,status="primary"),
 
     downloadButton("download"),
 
@@ -51,7 +57,8 @@ select_in_map <- function(input) {
     Latitude >= latRng[1] & Latitude <= latRng[2] &
     Longitude >= lngRng[1] & Longitude <= lngRng[2] &
     Year >= input$range[1] &
-    Year <= input$range[2]
+    Year <= input$range[2] &
+    Site %in% input$select_sites
     )
   selected_data
 }
