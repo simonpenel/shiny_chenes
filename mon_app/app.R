@@ -6,7 +6,12 @@ library(shinydashboard)
 
 # Masting data
 options(encoding="latin1")
+
 masting <- read.csv("merged.csv",sep=";")
+
+print("toto")
+sites <-unique(masting$Site)
+print(sites)
 
 # UI
 ui <- bootstrapPage(
@@ -32,6 +37,9 @@ ui <- bootstrapPage(
 
   ),
 )
+
+
+# Select the data per site
 
 
 # Select the data on the area, the year, the variable and the species
