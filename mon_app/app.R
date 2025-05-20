@@ -58,11 +58,9 @@ mean_var <- function(x, var) {
     }
 
 get_summary <- function(m){
-  sum_mast  <- data.frame(m$Arbre,m$Latitude,m$Longitude)
+  sum_mast  <- data.frame(Arbre=m$Arbre,Latitude=m$Latitude,Longitude=m$Longitude)
   sum_mast <- sum_mast[!duplicated(sum_mast), ]
-  print(sum_mast)
-  arbres <- sum_mast$m.Arbre
-  print(arbres)
+  arbres <- sum_mast$Arbre
 
   test = lapply(arbres,mean_var, var="tauxfructif")
   sum_mast$meantauxfructif = test
@@ -70,6 +68,7 @@ get_summary <- function(m){
   sum_mast$meanTotal_Flowers_per_m2 = test
   test = lapply(arbres,mean_var, var="Total_Fruits_per_m2")
   sum_mast$meanTotal_Fruits_per_m2 = test
+  print(sum_mast)
   sum_mast
 
 }
@@ -166,9 +165,11 @@ pal <- colorNumeric(
 
 
   observe({
-    leafletProxy("map", data = mean_years_filteredData()) %>%
+    #leafletProxy("map", data = mean_years_filteredData()) %>%
+    leafletProxy("map", data = get_summary(filteredData())) %>%
       clearShapes() %>%
-      addCircles(radius = ~tauxfructif,color = ~pal(Total_Flowers_per_m2),  group ="Cone" )
+      #addCircles(radius = ~meantauxfructif,color = ~pal(meantauxfructif),  group ="Cone" )
+      addCircles(radius = ~meantauxfructif,  group ="Cone" )
   })
 
   # Output for the download
