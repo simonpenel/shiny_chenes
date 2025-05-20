@@ -11,6 +11,7 @@ library(shinyjs)
 options(encoding="latin1")
 
 masting <- read.csv("merged.csv",sep=";")
+masting$meantauxfructif <- masting$tauxfructif * 0
 
 print("toto")
 sites <-unique(masting$Site)
@@ -71,6 +72,9 @@ select_in_map <- function(input) {
   selected_data
 }
 
+mean_years_select_in_map <- function(input) {
+    select_in_map(input)
+}
 # Plot of the fruits production
 plot_fruits <- function(df, type = "b", pch = 19,
 ylab = "Fruits per m2", xlab = "Year", leg = TRUE, posleg = "topleft",
@@ -112,8 +116,36 @@ pal <- colorNumeric(
     & masting$Site %in% input$select_sites, ]
   })
 
+  mean_years_filteredData <- reactive({
+    brut <- masting[masting$Year >= input$range[1]
+        & masting$Year <= input$range[2]
+        & masting$Site %in% input$select_sites, ]
+    sites = unique(brut$Site)
+    arbres = unique(brut$Arbre)
+    print("Sites:")
+    print(sites)
+    sel_site <- function(x) {brut[brut$Site == x,]}
+    mean_sel_site <- function(x) {mean(brut[brut$Site == x,]$tauxfructif)}
+    mean_sel_arbre <- function(x) {mean(brut[brut$Arbre == x,]$tauxfructif)}
+    set_mean_arbre <- function(x) {brut[brut$Arbre == x,]$meantauxfructif=mean(brut[brut$Arbre == x,]$tauxfructif)}
+
+    test = lapply(arbres,mean_sel_arbre)
+    #brut$meantauxfructif = test
+    print("test")
+    print(test)
+    print(brut$meantauxfructif)
+    #brut = subset(brut, select = -c(Year,Total_Flowers_per_m2, tauxfructif) )
+    test=lapply(arbres,set_mean_arbre)
+    print(test)
+    mean <- mean(brut$tauxfructif)
+    #print(mean)
+    print(brut)
+    brut
+  })
+
+
   observe({
-    leafletProxy("map", data = filteredData()) %>%
+    leafletProxy("map", data = mean_years_filteredData()) %>%
       clearShapes() %>%
       addCircles(radius = ~tauxfructif,color = ~pal(Total_Flowers_per_m2),  group ="Cone" )
   })
