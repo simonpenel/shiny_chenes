@@ -16,10 +16,11 @@ get_summary <- function(m){
   print(arbres)
 
   test = lapply(arbres,mean_var, var="tauxfructif")
-  print(test)
-#test2 = lapply(arbres,mean_var, var="Total_Fruits_per_m2")
-# print(test2)
   sum_mast$meantauxfructif = test
+  test = lapply(arbres,mean_var, var="Total_Flowers_per_m2")
+  sum_mast$meanTotal_Flowers_per_m2 = test
+  test = lapply(arbres,mean_var, var="Total_Fruits_per_m2")
+  sum_mast$meanTotal_Fruits_per_m2 = test
   sum_mast
 
 }
