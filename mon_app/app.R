@@ -33,6 +33,12 @@ ui <- bootstrapPage(
       value = range(masting$Year), step = 1, sep ="", width=600
     ),
 
+    sliderInput("circle_size", "Circle size", 1, 50,
+     value = 5, step = 1, sep ="", width=600
+    ),
+
+
+
     absolutePanel( class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 100, left = 10, bottom = "auto",
       width = 120, height = "auto",
@@ -129,7 +135,7 @@ server <- function(input, output, session) {
     & masting$Site %in% input$select_sites, ]
   })
 
-    # This will be used for the map.
+  # This will be used for the map.
   sumarizedData <- reactive({
     get_summary(
       masting[masting$Year >= input$range[1]
@@ -137,6 +143,10 @@ server <- function(input, output, session) {
     & masting$Site %in% input$select_sites, ])
   })
 
+  scale_circle <- reactive({
+    input$circle_size[1]
+  })
+  
 
 
 pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
@@ -148,7 +158,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
       print(x)
       print(length(x))
       if (length(x) > 0)  {
-        2 * x
+        scale_circle() * x
       }
       else {
         x
