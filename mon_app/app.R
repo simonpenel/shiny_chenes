@@ -49,19 +49,20 @@ ui <- bootstrapPage(
   ),
 )
 
-mean_var <- function(x, var) {
-    mean(masting[masting$Arbre == x,][[var]])
+
+mean_var <- function(x, var,data) {
+    mean(data[data$Arbre == x,][[var]])
     }
 
 get_summary <- function(m){
   sum_mast  <- data.frame(Arbre=m$Arbre,Latitude=m$Latitude,Longitude=m$Longitude)
   sum_mast <- unique(sum_mast)
   arbres <- sum_mast$Arbre
-  test = sapply(arbres,mean_var, var="tauxfructif")
+  test = sapply(arbres,mean_var, var="tauxfructif", data = m)
   sum_mast$meantauxfructif = c(test)
-  test = sapply(arbres,mean_var, var="Total_Flowers_per_m2")
+  test = sapply(arbres,mean_var, var="Total_Flowers_per_m2", data = m)
   sum_mast$meanTotal_Flowers_per_m2 = test
-  test = sapply(arbres,mean_var, var="Total_Fruits_per_m2")
+  test = sapply(arbres,mean_var, var="Total_Fruits_per_m2", data = m)
   sum_mast$meanTotal_Fruits_per_m2 = c(test)
   sum_mast
 
@@ -128,6 +129,15 @@ server <- function(input, output, session) {
     & masting$Site %in% input$select_sites, ]
   })
 
+    # This will be used for the map.
+  sumarizedData <- reactive({
+    get_summary(
+      masting[masting$Year >= input$range[1]
+    & masting$Year <= input$range[2]
+    & masting$Site %in% input$select_sites, ])
+  })
+
+
 
 pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
 
@@ -147,7 +157,8 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
 
   observe({
     #leafletProxy("map", data = mean_years_filteredData()) %>%
-    leafletProxy("map", data = get_summary(filteredData())) %>%
+    #leafletProxy("map", data = get_summary(filteredData())) %>%
+    leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
       addCircles(radius = ~echelle(meantauxfructif), color = ~pal(meantauxfructif), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Cone" )
   })
