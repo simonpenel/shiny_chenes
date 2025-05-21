@@ -11,9 +11,7 @@ library(shinyjs)
 options(encoding="latin1")
 
 masting <- read.csv("merged.csv",sep=";")
-masting$meantauxfructif <- masting$tauxfructif * 0
 
-print("toto")
 sites <-unique(masting$Site)
 print(sites)
 
@@ -28,8 +26,6 @@ ui <- bootstrapPage(
   leafletOutput("map", width = "100%", height = "100%"),
   absolutePanel(bottom = 10, left = 10, width = 400, class = "panel panel-default", draggable = TRUE,
 
-
-    #prettyCheckboxGroup("select_sites", "Sites", choices = sites, selected=sites,status="primary"),
 
     #downloadButton("download"),
 
@@ -59,16 +55,14 @@ mean_var <- function(x, var) {
 
 get_summary <- function(m){
   sum_mast  <- data.frame(Arbre=m$Arbre,Latitude=m$Latitude,Longitude=m$Longitude)
-  sum_mast <- sum_mast[!duplicated(sum_mast), ]
+  sum_mast <- unique(sum_mast)
   arbres <- sum_mast$Arbre
-
-  test = lapply(arbres,mean_var, var="tauxfructif")
-  sum_mast$meantauxfructif = test
-  test = lapply(arbres,mean_var, var="Total_Flowers_per_m2")
+  test = sapply(arbres,mean_var, var="tauxfructif")
+  sum_mast$meantauxfructif = c(test)
+  test = sapply(arbres,mean_var, var="Total_Flowers_per_m2")
   sum_mast$meanTotal_Flowers_per_m2 = test
-  test = lapply(arbres,mean_var, var="Total_Fruits_per_m2")
-  sum_mast$meanTotal_Fruits_per_m2 = test
-  print(sum_mast)
+  test = sapply(arbres,mean_var, var="Total_Fruits_per_m2")
+  sum_mast$meanTotal_Fruits_per_m2 = c(test)
   sum_mast
 
 }
@@ -116,9 +110,7 @@ points(arbre$Year, arbre$Total_Fruits_per_m2, type = type, pch = pch, col = col[
 # SERVER
 server <- function(input, output, session) {
 
-pal <- colorNumeric(
-  palette = "magma",
-  domain = masting$Total_Flowers_per_m2)
+
 
   output$map <- renderLeaflet({
     # Use leaflet() here, and only include aspects of the map that
@@ -136,41 +128,30 @@ pal <- colorNumeric(
     & masting$Site %in% input$select_sites, ]
   })
 
-  mean_years_filteredData <- reactive({
-    brut <- masting[masting$Year >= input$range[1]
-        & masting$Year <= input$range[2]
-        & masting$Site %in% input$select_sites, ]
-    sites = unique(brut$Site)
-    arbres = unique(brut$Arbre)
-    print("Sites:")
-    print(sites)
-    sel_site <- function(x) {brut[brut$Site == x,]}
-    mean_sel_site <- function(x) {mean(brut[brut$Site == x,]$tauxfructif)}
-    mean_sel_arbre <- function(x) {mean(brut[brut$Arbre == x,]$tauxfructif)}
-    set_mean_arbre <- function(x) {brut[brut$Arbre == x,]$meantauxfructif=mean(brut[brut$Arbre == x,]$tauxfructif)}
 
-    test = lapply(arbres,mean_sel_arbre)
-    #brut$meantauxfructif = test
-    print("test")
-    print(test)
-    print(brut$meantauxfructif)
-    #brut = subset(brut, select = -c(Year,Total_Flowers_per_m2, tauxfructif) )
-    test=lapply(arbres,set_mean_arbre)
-    print(test)
-    mean <- mean(brut$tauxfructif)
-    #print(mean)
-    print(brut)
-    brut
-  })
+pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
 
+
+
+  echelle <- function(x){
+      print("X=")
+      print(x)
+      print(length(x))
+      if (length(x) > 0)  {
+        2 * x
+      }
+      else {
+        x
+      }
+    }
 
   observe({
     #leafletProxy("map", data = mean_years_filteredData()) %>%
     leafletProxy("map", data = get_summary(filteredData())) %>%
       clearShapes() %>%
-      #addCircles(radius = ~meantauxfructif,color = ~pal(meantauxfructif),  group ="Cone" )
-      addCircles(radius = ~meantauxfructif,  group ="Cone" )
+      addCircles(radius = ~echelle(meantauxfructif), color = ~pal(meantauxfructif), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Cone" )
   })
+
 
   # Output for the download
   output$download <- downloadHandler(
