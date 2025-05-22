@@ -43,6 +43,10 @@ useShinyjs(),
       draggable = TRUE, top = 100, left = 10, bottom = "auto",
       width = 120, height = "auto",
       prettyCheckboxGroup("select_sites", "Sites", choices = sites, selected=sites,status="primary"),
+      actionButton('unselect_all', 'Unselect all',
+        style="opacity: .80; color:black; background-color: white; border-color: white"),
+      actionButton('select_all', 'Select all',
+        style="opacity: .80; color: black; background-color: white; border-color: white"),
 
     ),
       fixedPanel(top = 10, left = 165,
@@ -124,6 +128,15 @@ server <- function(input, output, session) {
   observeEvent(input$plotBtn, {
     toggle('controls')
   })
+
+  observeEvent(input$unselect_all, {
+  updateCheckboxGroupInput(session,"select_sites","Sites:",choices=sites)
+  })
+
+  observeEvent(input$select_all, {
+  updateCheckboxGroupInput(session,"select_sites","Sites:",choices=sites,selected=sites)
+  })
+
 
   output$map <- renderLeaflet({
     # Use leaflet() here, and only include aspects of the map that
