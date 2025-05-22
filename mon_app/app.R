@@ -17,7 +17,7 @@ print(sites)
 
 # UI
 ui <- bootstrapPage(
-
+useShinyjs(),
   tags$style(type = "text/css",
     "html, body {width:100%;height:100%}
     #controls { background-color: #ddd; opacity: 0.85;"
@@ -45,13 +45,17 @@ ui <- bootstrapPage(
       prettyCheckboxGroup("select_sites", "Sites", choices = sites, selected=sites,status="primary"),
 
     ),
-
-    absolutePanel(id = "controls", class = "panel panel-default", fixed = TRUE,
+      fixedPanel(top = 10, left = 165,
+                 actionButton('plotBtn', 'Show Panel',
+                              style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")),
+                              
+    
+    absolutePanel(id = 'controls', class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 10, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("histCentile", height = 250),
-    )
-
+    ),
+  
   ),
 )
 
@@ -117,7 +121,9 @@ points(arbre$Year, arbre$Total_Fruits_per_m2, type = type, pch = pch, col = col[
 # SERVER
 server <- function(input, output, session) {
 
-
+  observeEvent(input$plotBtn, {
+    toggle('controls')
+  })
 
   output$map <- renderLeaflet({
     # Use leaflet() here, and only include aspects of the map that
