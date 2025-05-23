@@ -163,10 +163,9 @@ plot_barplot <- function(df, ...){
   barplot(df$meantauxfructif,names.arg=df$Arbre,las=2 )
 }
 
-plot_barplot_var <- function(df,var, ...){
+plot_barplot_var <- function(df,var,main, ...){
   par(mar=c(8,4,1,1))
-
-  barplot(df[[var]],names.arg=df$Arbre,las=2 )
+  barplot(df[[var]],names.arg=df$Arbre, las=2, main = main )
 }
 
 
@@ -284,7 +283,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   #  xlab = "toto"
   #  ylab = "toto"
     #plot(data_plot$Arbre,data_plot$meantauxfructif,type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab)
-    plot_barplot_var(data_plot,"meantauxfructif")
+    plot_barplot_var(data_plot,"meantauxfructif", "Taux fructif moyen")
   }
   })
 
@@ -302,7 +301,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   #  xlab = "toto"
   #  ylab = "toto"
     #plot(data_plot$Arbre,data_plot$meantauxfructif,type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab)
-    plot_barplot_var(data_plot,"maxtauxfructif")
+    plot_barplot_var(data_plot,"maxtauxfructif","Taux fructif maxiumum")
   }
   })
 
