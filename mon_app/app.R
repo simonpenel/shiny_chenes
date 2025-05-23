@@ -23,8 +23,9 @@ useShinyjs(),
     #controls { background-color: #ddd; opacity: 0.85;"
   ),
 
-  leafletOutput("map", width = "100%", height = "100%"),
-  absolutePanel(bottom = 10, left = 10, width = 400, class = "panel panel-default", draggable = TRUE,
+leafletOutput("map", width = "100%", height = "100%"),
+absolutePanel(bottom = 10, left = 10, width = 400,  height = 200,
+class = "panel panel-default", draggable = TRUE,
 
 
     #downloadButton("download"),
@@ -48,22 +49,32 @@ useShinyjs(),
 
     ),
 
-    fixedPanel(top = 10, left = 165,
-        actionButton('plotBtn', 'Show Panel',
+    fixedPanel(top = 100, left = 165,
+        actionButton('plotBtn', 'Show/Hide Plot',
+        style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
+    ),
+    fixedPanel(top = 150, left = 165,
+        actionButton('barplotBtn1', 'Show/Hide Barplot 1',
+        style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
+    ),
+    fixedPanel(top = 200, left = 165,
+        actionButton('barplotBtn2', 'Show/Hide Barplot 2',
         style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
     ),
 
-    absolutePanel(id = 'controls', class = "panel panel-default", fixed = TRUE,
+
+
+    absolutePanel(id = 'plotyear', class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 10, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("plotPerYear", height = 250),
     ),
-    absolutePanel(id = 'histograme', class = "panel panel-default", fixed = TRUE,
+    absolutePanel(id = 'barplot1', class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 260, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("plotHisto", height = 250),
     ),
-    absolutePanel(id = 'histograme', class = "panel panel-default", fixed = TRUE,
+    absolutePanel(id = 'barplot2', class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 510, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("plotHistoMax", height = 250),
@@ -179,7 +190,15 @@ plot_barplot_var <- function(df,var, ...){
 server <- function(input, output, session) {
 
   observeEvent(input$plotBtn, {
-    toggle('controls')
+    toggle('plotyear')
+  })
+
+  observeEvent(input$barplotBtn1, {
+    toggle('barplot1')
+  })
+
+  observeEvent(input$barplotBtn2, {
+    toggle('barplot2')
   })
 
   observeEvent(input$unselect_all, {
