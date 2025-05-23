@@ -261,7 +261,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     #leafletProxy("map", data = get_summary(filteredData())) %>%
       leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
-      addCircles(radius = ~echelle(meantauxfructif), color = ~pal(meantauxfructif), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Cone" )
+      addCircles(radius = ~echelle(meantauxfructif), color = ~pal(meantauxfructif), label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Cone" )
   })
 
 
