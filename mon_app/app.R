@@ -130,27 +130,11 @@ select_in_map <- function(input) {
 mean_years_select_in_map <- function(input) {
     select_in_map(input)
 }
-# Plot of the fruits production
-plot_fruits <- function(df, type = "b", pch = 19,
-ylab = "Fruits per m2", xlab = "Year", leg = TRUE, posleg = "topleft",
-main = "Production de fruit au cours du temps", ...){
-arbres = unique(df$Arbre)
-arbres
-nt   <- length(arbres)
-col <- hcl.colors(nt, "Dark 2")
-arbre <- df[df$Arbre==arbres[1],]
-ylim <- c(0, max(df$Total_Fruits_per_m2))
-plot(arbre$Year, arbre$Total_Fruits_per_m2, type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab, main = main, ...)
-for(j in 2:nt) {
-arbre <- df[df$Arbre==arbres[j],]
-points(arbre$Year, arbre$Total_Fruits_per_m2, type = type, pch = pch, col = col[j])
-}
-}
 
-# Plot of the fruits production
-plot_fruits_var <- function(df,var, type = "b", pch = 19,
-ylab = var, xlab = "Year", leg = TRUE, posleg = "topleft",
-main = var, ...){
+
+# Plot of the  production along years
+plot_years_var <- function(df,var, main, ylab, type = "b", pch = 19,
+xlab = "Year", leg = TRUE, posleg = "topleft", ...){
 arbres = unique(df$Arbre)
 arbres
 nt   <- length(arbres)
@@ -282,7 +266,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     if (nrow(data_plot) > 0) {
     #plot(data_plot$Year,data_plot$tauxfructif,type="b")
     #plot_fruits(data_plot)
-    plot_fruits_var(data_plot,"tauxfructif")
+    plot_years_var(data_plot,"tauxfructif","Taux fructif au cours du temps","Taux fructif")
   }
   })
 
