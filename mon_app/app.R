@@ -136,6 +136,24 @@ points(arbre$Year, arbre$Total_Fruits_per_m2, type = type, pch = pch, col = col[
 }
 }
 
+# Plot of the fruits production
+plot_fruits_var <- function(df,var, type = "b", pch = 19,
+ylab = var, xlab = "Year", leg = TRUE, posleg = "topleft",
+main = var, ...){
+arbres = unique(df$Arbre)
+arbres
+nt   <- length(arbres)
+col <- hcl.colors(nt, "Dark 2")
+arbre <- df[df$Arbre==arbres[1],]
+ylim <- c(0, max(df[[var]]))
+plot(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab, main = main, ...)
+for(j in 2:nt) {
+arbre <- df[df$Arbre==arbres[j],]
+points(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[j])
+}
+}
+
+
 # Plot barplot
 plot_barplot <- function(df, ...){
   par(mar=c(8,4,1,1))
@@ -244,7 +262,8 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     data_plot <- select_in_map(input)
     if (nrow(data_plot) > 0) {
     #plot(data_plot$Year,data_plot$tauxfructif,type="b")
-    plot_fruits(data_plot)
+    #plot_fruits(data_plot)
+    plot_fruits_var(data_plot,"tauxfructif")
   }
   })
 
