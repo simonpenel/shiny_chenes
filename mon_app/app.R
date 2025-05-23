@@ -141,6 +141,7 @@ nt   <- length(arbres)
 col <- hcl.colors(nt, "Dark 2")
 arbre <- df[df$Arbre==arbres[1],]
 ylim <- c(0, max(df[[var]]))
+xlim <- c(min(df$Year)-1, max(df$Year)+1)
 plot(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab, main = main, ...)
 for(j in 2:nt) {
 arbre <- df[df$Arbre==arbres[j],]
