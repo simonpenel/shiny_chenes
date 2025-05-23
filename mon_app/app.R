@@ -37,8 +37,6 @@ useShinyjs(),
      value = 5, step = 1, sep ="", width=600
     ),
 
-
-
     absolutePanel( class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 100, left = 10, bottom = "auto",
       width = 120, height = "auto",
@@ -49,17 +47,22 @@ useShinyjs(),
         style="opacity: .80; color: black; background-color: white; border-color: white"),
 
     ),
-      fixedPanel(top = 10, left = 165,
-                 actionButton('plotBtn', 'Show Panel',
-                              style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")),
-                              
-    
+
+    fixedPanel(top = 10, left = 165,
+        actionButton('plotBtn', 'Show Panel',
+        style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
+    ),
+
     absolutePanel(id = 'controls', class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 10, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
-      plotOutput("histCentile", height = 250),
+      plotOutput("plotPerYear", height = 250),
     ),
-  
+    absolutePanel(id = 'histograme', class = "panel panel-default", fixed = TRUE,
+      draggable = TRUE, top = 300, left = "auto", right = 20, bottom = "auto",
+      width = 330, height = "auto",
+      plotOutput("plotHisto", height = 250),
+    ),
   ),
 )
 
@@ -121,6 +124,11 @@ points(arbre$Year, arbre$Total_Fruits_per_m2, type = type, pch = pch, col = col[
 }
 }
 
+# Plot barplot
+plot_barplot <- function(df, ...){
+  par(mar=c(8,4,1,1))
+  barplot(df$meantauxfructif,names.arg=df$Arbre,las=2 )
+}
 
 # SERVER
 server <- function(input, output, session) {
@@ -165,7 +173,7 @@ server <- function(input, output, session) {
   scale_circle <- reactive({
     input$circle_size[1]
   })
-  
+
 
 
 pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
@@ -187,7 +195,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   observe({
     #leafletProxy("map", data = mean_years_filteredData()) %>%
     #leafletProxy("map", data = get_summary(filteredData())) %>%
-    leafletProxy("map", data = sumarizedData()) %>%
+      leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
       addCircles(radius = ~echelle(meantauxfructif), color = ~pal(meantauxfructif), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Cone" )
   })
@@ -205,13 +213,32 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   )
 
   # Output the plot
-  output$histCentile <- renderPlot({
+  output$plotPerYear <- renderPlot({
     data_plot <- select_in_map(input)
     if (nrow(data_plot) > 0) {
     #plot(data_plot$Year,data_plot$tauxfructif,type="b")
     plot_fruits(data_plot)
   }
+  })
 
+  # Output the plot
+  output$plotHisto <- renderPlot({
+    data_plot <- sumarizedData()
+    if (nrow(data_plot) > 0) {
+      print(data_plot)
+    #plot(data_plot$Year,data_plot$tauxfructif,type="b")
+
+
+    ylim <- c(0, max(data_plot$meantauxfructif))
+    #plot(arbre$Year, arbre$Total_Fruits_per_m2, type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab, main = main, ...)
+    type = "b"
+    pch  = 19
+    col = c("red")
+    xlab = "toto"
+    ylab = "toto"
+    #plot(data_plot$Arbre,data_plot$meantauxfructif,type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab)
+    plot_barplot(data_plot)
+  }
   })
 
 }
