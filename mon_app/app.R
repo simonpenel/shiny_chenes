@@ -59,9 +59,14 @@ useShinyjs(),
       plotOutput("plotPerYear", height = 250),
     ),
     absolutePanel(id = 'histograme', class = "panel panel-default", fixed = TRUE,
-      draggable = TRUE, top = 300, left = "auto", right = 20, bottom = "auto",
+      draggable = TRUE, top = 260, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("plotHisto", height = 250),
+    ),
+    absolutePanel(id = 'histograme', class = "panel panel-default", fixed = TRUE,
+      draggable = TRUE, top = 510, left = "auto", right = 20, bottom = "auto",
+      width = 330, height = "auto",
+      plotOutput("plotHistoMax", height = 250),
     ),
   ),
 )
@@ -70,6 +75,11 @@ useShinyjs(),
 mean_var <- function(x, var,data) {
     mean(data[data$Arbre == x,][[var]])
     }
+
+max_var <- function(x, var,data) {
+        max(data[data$Arbre == x,][[var]])
+        }
+
 
 get_summary <- function(m){
   sum_mast  <- data.frame(Arbre=m$Arbre,Latitude=m$Latitude,Longitude=m$Longitude)
@@ -81,6 +91,8 @@ get_summary <- function(m){
   sum_mast$meanTotal_Flowers_per_m2 = test
   test = sapply(arbres,mean_var, var="Total_Fruits_per_m2", data = m)
   sum_mast$meanTotal_Fruits_per_m2 = c(test)
+  test = sapply(arbres,max_var, var="tauxfructif", data = m)
+  sum_mast$maxtauxfructif = c(test)
   sum_mast
 
 }
@@ -127,8 +139,23 @@ points(arbre$Year, arbre$Total_Fruits_per_m2, type = type, pch = pch, col = col[
 # Plot barplot
 plot_barplot <- function(df, ...){
   par(mar=c(8,4,1,1))
+
+  v_mean = df$meantauxfructif
+  v_max = df$maxtauxfructif
+  meanmax = matrix(c(v_mean,v_max),nc=2, byrow=F)
+  #colnames(meanmax) = df$Arbre
+
+  #rownames(meanmax) <- c("Mean","Max")
+#barplot(meanmax,col=c(5:6),beside=T)
   barplot(df$meantauxfructif,names.arg=df$Arbre,las=2 )
 }
+
+plot_barplot_var <- function(df,var, ...){
+  par(mar=c(8,4,1,1))
+
+  barplot(df[[var]],names.arg=df$Arbre,las=2 )
+}
+
 
 # SERVER
 server <- function(input, output, session) {
@@ -228,16 +255,32 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
       print(data_plot)
     #plot(data_plot$Year,data_plot$tauxfructif,type="b")
 
-
-    ylim <- c(0, max(data_plot$meantauxfructif))
-    #plot(arbre$Year, arbre$Total_Fruits_per_m2, type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab, main = main, ...)
-    type = "b"
-    pch  = 19
-    col = c("red")
-    xlab = "toto"
-    ylab = "toto"
+  #  ylim <- c(0, max(data_plot$meantauxfructif))
+  #  type = "b"
+  #  pch  = 19
+  #  col = c("red")
+  #  xlab = "toto"
+  #  ylab = "toto"
     #plot(data_plot$Arbre,data_plot$meantauxfructif,type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab)
-    plot_barplot(data_plot)
+    plot_barplot_var(data_plot,"meantauxfructif")
+  }
+  })
+
+  # Output the plot
+  output$plotHistoMax <- renderPlot({
+    data_plot <- sumarizedData()
+    if (nrow(data_plot) > 0) {
+      print(data_plot)
+    #plot(data_plot$Year,data_plot$tauxfructif,type="b")
+
+  #  ylim <- c(0, max(data_plot$meantauxfructif))
+  #  type = "b"
+  #  pch  = 19
+  #  col = c("red")
+  #  xlab = "toto"
+  #  ylab = "toto"
+    #plot(data_plot$Arbre,data_plot$meantauxfructif,type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab)
+    plot_barplot_var(data_plot,"maxtauxfructif")
   }
   })
 
