@@ -20,7 +20,10 @@ ui <- bootstrapPage(
 useShinyjs(),
   tags$style(type = "text/css",
     "html, body {width:100%;height:100%}
-    #controls { background-color: #ddd; opacity: 0.85;"
+    #plotyear { background-color: #ddd; opacity: 0.80;}
+    #barplot1 {opacity: 0.80;}
+    #barplot2 {opacity: 0.80;}"
+
   ),
 
 leafletOutput("map", width = "100%", height = "100%"),
@@ -49,15 +52,15 @@ class = "panel panel-default", draggable = TRUE,
 
     ),
 
-    fixedPanel(top = 100, left = 165,
+    fixedPanel(bottom=10, right = 350,
         actionButton('plotBtn', 'Show/Hide Plot',
         style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
     ),
-    fixedPanel(top = 150, left = 165,
+    fixedPanel(bottom=10, right = 180,
         actionButton('barplotBtn1', 'Show/Hide Barplot 1',
         style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
     ),
-    fixedPanel(top = 200, left = 165,
+    fixedPanel(bottom=10, right = 10,
         actionButton('barplotBtn2', 'Show/Hide Barplot 2',
         style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
     ),
