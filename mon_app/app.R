@@ -279,17 +279,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   output$plotHisto <- renderPlot({
     data_plot <- sumarizedData()
     if (nrow(data_plot) > 0) {
-      print(data_plot)
-    #plot(data_plot$Year,data_plot$tauxfructif,type="b")
-
-  #  ylim <- c(0, max(data_plot$meantauxfructif))
-  #  type = "b"
-  #  pch  = 19
-  #  col = c("red")
-  #  xlab = "toto"
-  #  ylab = "toto"
-    #plot(data_plot$Arbre,data_plot$meantauxfructif,type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab)
-    plot_barplot_var(data_plot,"meantauxfructif", "Taux fructif moyen par arbre")
+      plot_barplot_var(data_plot,"meantauxfructif", "Taux fructif moyen par arbre")
   }
   })
 
@@ -297,17 +287,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   output$plotHistoMax <- renderPlot({
     data_plot <- sumarizedData()
     if (nrow(data_plot) > 0) {
-      print(data_plot)
-    #plot(data_plot$Year,data_plot$tauxfructif,type="b")
-
-  #  ylim <- c(0, max(data_plot$meantauxfructif))
-  #  type = "b"
-  #  pch  = 19
-  #  col = c("red")
-  #  xlab = "toto"
-  #  ylab = "toto"
-    #plot(data_plot$Arbre,data_plot$meantauxfructif,type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab)
-    plot_barplot_var(data_plot,"maxtauxfructif","Taux fructif maximum par arbre")
+      plot_barplot_var(data_plot,"maxtauxfructif","Taux fructif maximum par arbre")
   }
   })
 
