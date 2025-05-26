@@ -28,7 +28,11 @@ print(site)
 taux = data[data$Year == year ,]$tauxfructif
 print(taux)
 mean_taux <- mean(taux)
-lol$mean_taux_over_trees = mean_taux
+print("MEAN TAUX")
+print(mean_taux)
+#lol$mean_taux_over_trees = mean_taux
+print(lol[lol$Year == year ,])
+#lol[lol$Year == year ,]$mean_taux_over_trees = mean_taux
 #sum[sum$Site == site,]$mean_taux_over_trees = mean_taux
 #sum[sum$Year == year,]$mean_taux_over_trees = mean_taux
 print("LOLOLO")
