@@ -39,7 +39,7 @@ class = "panel panel-default", draggable = TRUE,
     ),
 
     absolutePanel( class = "panel panel-default", fixed = TRUE,
-      draggable = TRUE, top = 100, left = 10, bottom = "auto",
+      draggable = TRUE, top = 120, left = 10, bottom = "auto",
       width = 120, height = "auto",
       prettyCheckboxGroup("select_sites", "Sites", choices = sites, selected=sites,status="primary"),
       actionButton('unselect_all', 'Unselect all',
@@ -142,7 +142,7 @@ col <- hcl.colors(nt, "Dark 2")
 arbre <- df[df$Arbre==arbres[1],]
 ylim <- c(0, max(df[[var]]))
 xlim <- c(min(df$Year)-1, max(df$Year)+1)
-plot(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab, main = main, ...)
+plot(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[1], xlim=xlim, ylim = ylim, xlab = xlab, ylab = ylab, main = main, ...)
 for(j in 2:nt) {
 arbre <- df[df$Arbre==arbres[j],]
 points(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[j])
@@ -198,7 +198,9 @@ server <- function(input, output, session) {
     # Use leaflet() here, and only include aspects of the map that
     # won't need to change dynamically (at least, not unless the
     # entire map is being torn down and recreated).
-    leaflet(filteredData()) %>% addTiles(options = tileOptions(minZoom = 0, maxZoom = 25)) %>%
+    leaflet(filteredData()) %>%
+    addTiles(options = tileOptions(minZoom = 0, maxZoom = 25)) %>%
+    addScaleBar(position = 'topleft') %>%
     fitBounds(~min(Longitude) - 0.001 , ~min(Latitude) - 0.001, ~max(Longitude) + 0.001 , ~max(Latitude) + 0.001)
   })
 
