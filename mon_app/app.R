@@ -246,7 +246,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
       print(x)
       print(length(x))
       if (length(x) > 0)  {
-        scale_circle() * x
+        (scale_circle() - 1 ) * x + 1
       }
       else {
         x
