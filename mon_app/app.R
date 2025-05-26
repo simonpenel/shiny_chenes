@@ -42,7 +42,7 @@ class = "panel panel-default", draggable = TRUE,
     ),
 
     absolutePanel( class = "panel panel-default", fixed = TRUE,
-      draggable = TRUE, top = 120, left = 10, bottom = "auto",
+      draggable = TRUE, top = 180, left = 10, bottom = "auto",
       width = 120, height = "auto",
       prettyCheckboxGroup("select_sites", "Sites", choices = sites, selected=sites,status="primary"),
       actionButton('unselect_all', 'Unselect all',
@@ -204,6 +204,14 @@ server <- function(input, output, session) {
     leaflet(filteredData()) %>%
     addTiles(options = tileOptions(minZoom = 0, maxZoom = 25)) %>%
     addScaleBar(position = 'topleft') %>%
+    addMeasure(position = "topleft",
+    primaryLengthUnit = "meters",
+    secondaryLengthUnit = "kilometers",
+    primaryAreaUnit = "sqmeters",
+    secondaryAreaUnit = "hectares",
+    localization = "fr",
+    activeColor = "red",
+    completedColor = "red") %>%
     fitBounds(~min(Longitude) - 0.001 , ~min(Latitude) - 0.001, ~max(Longitude) + 0.001 , ~max(Latitude) + 0.001)
   })
 
