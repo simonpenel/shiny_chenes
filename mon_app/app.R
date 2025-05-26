@@ -289,7 +289,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   #  xlab = "toto"
   #  ylab = "toto"
     #plot(data_plot$Arbre,data_plot$meantauxfructif,type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab)
-    plot_barplot_var(data_plot,"meantauxfructif", "Taux fructif moyen")
+    plot_barplot_var(data_plot,"meantauxfructif", "Taux fructif moyen par arbre")
   }
   })
 
@@ -307,7 +307,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   #  xlab = "toto"
   #  ylab = "toto"
     #plot(data_plot$Arbre,data_plot$meantauxfructif,type = type, pch = pch, col = col[1], ylim = ylim, xlab = xlab, ylab = ylab)
-    plot_barplot_var(data_plot,"maxtauxfructif","Taux fructif maxiumum")
+    plot_barplot_var(data_plot,"maxtauxfructif","Taux fructif maximum par arbre")
   }
   })
 
