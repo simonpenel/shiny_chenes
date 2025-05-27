@@ -107,6 +107,8 @@ get_summary <- function(m){
   sum_mast$meanTotal_Fruits_per_m2 = c(test)
   test = sapply(arbres,max_var, var="tauxfructif", data = m)
   sum_mast$maxtauxfructif = c(test)
+  test = sapply(arbres,max_var, var="Total_Fruits_per_m2", data = m)
+  sum_mast$maxTotal_Fruits_per_m2 = c(test)  
   sum_mast
 
 }
@@ -157,14 +159,17 @@ points(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[j])
 plot_barplot <- function(df, ...){
   par(mar=c(8,4,1,1))
 
-  v_mean = df$meantauxfructif
-  v_max = df$maxtauxfructif
+  #"v_mean = df$meantauxfructif
+  #v_max = df$maxtauxfructif
+
+  v_mean = df$meanTotal_Fruits_per_m2
+  v_max = df$maxTotal_Fruits_per_m2
   meanmax = matrix(c(v_mean,v_max),nc=2, byrow=F)
   #colnames(meanmax) = df$Arbre
 
   #rownames(meanmax) <- c("Mean","Max")
 #barplot(meanmax,col=c(5:6),beside=T)
-  barplot(df$meantauxfructif,names.arg=df$Arbre,las=2 )
+  barplot(df$meanTotal_Fruits_per_m2,names.arg=df$Arbre,las=2 )
 }
 
 plot_barplot_var <- function(df,var,main, ...){
@@ -253,12 +258,25 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
       }
     }
 
+  echelle_sqrt <- function(x){
+      print("X=")
+      print(x)
+      print(length(x))
+      if (length(x) > 0)  {
+        sqrt((scale_circle() - 1 ) * x )
+      }
+      else {
+        x
+      }
+    }
+
+
   observe({
     #leafletProxy("map", data = mean_years_filteredData()) %>%
     #leafletProxy("map", data = get_summary(filteredData())) %>%
       leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
-      addCircles(radius = ~echelle(meantauxfructif), color = ~pal(meantauxfructif), label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Cone" )
+      addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2), label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Cone" )
   })
 
 
@@ -279,7 +297,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     if (nrow(data_plot) > 0) {
     #plot(data_plot$Year,data_plot$tauxfructif,type="b")
     #plot_fruits(data_plot)
-    plot_years_var(data_plot,"tauxfructif","Taux fructif au cours du temps","Taux fructif")
+    plot_years_var(data_plot,"Total_Fruits_per_m2","Nombre de fruits au m2 au cours du temps","Nombre de fruits au m2")
   }
   })
 
@@ -287,7 +305,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   output$plotHisto <- renderPlot({
     data_plot <- sumarizedData()
     if (nrow(data_plot) > 0) {
-      plot_barplot_var(data_plot,"meantauxfructif", "Taux fructif moyen par arbre")
+      plot_barplot_var(data_plot,"meanTotal_Fruits_per_m2", "Nombre de fruits au m2 moyen par arbre")
   }
   })
 
@@ -295,7 +313,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   output$plotHistoMax <- renderPlot({
     data_plot <- sumarizedData()
     if (nrow(data_plot) > 0) {
-      plot_barplot_var(data_plot,"maxtauxfructif","Taux fructif maximum par arbre")
+      plot_barplot_var(data_plot,"maxTotal_Fruits_per_m2","Nombre de fruits au m2 maximum par arbre")
   }
   })
 
