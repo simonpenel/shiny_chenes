@@ -82,6 +82,12 @@ class = "panel panel-default", draggable = TRUE,
       width = 330, height = "auto",
       plotOutput("plotHistoMax", height = 250),
     ),
+    absolutePanel(id = 'plotsiteyear', class = "panel panel-default", fixed = TRUE,
+      draggable = TRUE, top = 10, left = "auto", right = 20, bottom = "auto",
+      width = 330, height = "auto",
+      plotOutput("plotSitePerYear", height = 250),
+    ),
+
   ),
 )
 
@@ -108,7 +114,7 @@ get_summary <- function(m){
   test = sapply(arbres,max_var, var="tauxfructif", data = m)
   sum_mast$maxtauxfructif = c(test)
   test = sapply(arbres,max_var, var="Total_Fruits_per_m2", data = m)
-  sum_mast$maxTotal_Fruits_per_m2 = c(test)  
+  sum_mast$maxTotal_Fruits_per_m2 = c(test)
   sum_mast
 
 }
@@ -134,6 +140,87 @@ select_in_map <- function(input) {
 
 mean_years_select_in_map <- function(input) {
     select_in_map(input)
+}
+
+# Fonction qui renvoie une df avec la valeur moyenne sur les arbres par site/an
+# ------------------------------------------------------------------------------
+get_summary_site <- function(m){
+  sum_site  <- data.frame(Site=m$Site,Year=m$Year,Moyenne_sur_les_arbres=0)
+  sum_site <- unique(sum_site)
+  sites <- unique(sum_site$Site)
+  test <- lapply(sites,extract_site,data=m,sum_site=sum_site)
+  test
+}
+
+# Fonction qui calcule la valeur moyenne pour une annee donnee
+# ------------------------------------------------------------
+mean_over_trees <- function(year,data,var){
+  taux = data[data$Year == year ,][[var]]
+  mean_taux <- mean(taux)
+  mean_taux
+}
+
+# Fonction qui recupere les donnes pour un site, et renvoie une df
+# avec les valeurs moyenne d'une variable sur les arbres par annee
+# -----------------------------------------------------------------
+extract_site <- function(site,data,sum_site) {
+  test <- data[data$Site == site ,]
+  years <- unique(test$Year)
+  mean_year <- sapply(years,mean_over_trees,data=test,var="Total_Fruits_per_m2")
+  sum_site[sum_site$Site == site,]$Moyenne_sur_les_arbres = mean_year
+  sum_site_val  = sum_site[sum_site$Site == site,]
+  sum_site_val
+}
+
+# Fonction d'affichage
+# --------------------
+plot_site_years_var <- function(df,var, main, ylab, type = "b", pch = 19,
+xlab = "Year", leg = TRUE, posleg = "topleft", ...){
+  nt   <- length(df)
+  col <- hcl.colors(nt, "Dark 2")
+  type <- "b"
+  pch <-19
+
+  # Recherche des maxs
+  site_data <-df[[1]]
+  ymax_all <- max(site_data[[var]])
+  xmax_all <- max(site_data$Year)
+  xmin_all  <- min(site_data$Year)
+
+  if (nt > 1) {
+  for(j in 2:nt) {
+    site_data <-df[[j]]
+    ymax <- max(site_data[[var]])
+    xmax <- max(site_data$Year)
+    xmin <- min(site_data$Year)
+    ymax_all <- max(c(ymax,ymax_all))
+    xmax_all <- max(c(xmax,xmax_all))
+    xmin_all  <- min(c(xmin,xmin_all))
+  }
+  }
+
+  site_data <-df[[1]]
+  site_data <-site_data[order(site_data$Year),,drop=FALSE]
+
+  ylim <- c(0,ymax_all)
+  xlim <- c(xmin_all - 3, xmax_all + 1)
+
+  plot(site_data$Year, site_data[[var]], type = type, pch = pch, col = col[1],
+   xlim=xlim, ylim = ylim, xlab = xlab, ylab = ylab, main = main,
+   xaxp=c(xmin_all,xmax_all,xmax_all - xmin_all))
+
+  liste_sites <- c(unique(site_data$Site))
+
+  if (nt > 1) {
+  for(j in 2:nt) {
+    site_data <-df[[j]]
+    site_data <-site_data[order(site_data$Year),,drop=FALSE]
+    points(site_data$Year, site_data[[var]], type = type, pch = pch, col = col[j])
+    liste_sites <- append(liste_sites, unique(site_data$Site))
+  }
+  }
+  legend("topleft", legend=liste_sites,box.lty=0,
+       col=col, lty=1, cex=0.8)
 }
 
 
@@ -295,9 +382,17 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   output$plotPerYear <- renderPlot({
     data_plot <- select_in_map(input)
     if (nrow(data_plot) > 0) {
-    #plot(data_plot$Year,data_plot$tauxfructif,type="b")
-    #plot_fruits(data_plot)
     plot_years_var(data_plot,"Total_Fruits_per_m2","Nombre de fruits au m2 au cours du temps","Nombre de fruits au m2")
+  }
+  })
+
+  # Output the plot
+  output$plotSitePerYear <- renderPlot({
+    data_plot <-filteredData()
+    if (nrow(data_plot) > 0) {
+
+      toto <- get_summary_site(data_plot)
+      plot_site_years_var(toto,"Moyenne_sur_les_arbres", "Nb de fruit par m2 (moyenne)", "Nb de fruit par m2")
   }
   })
 
