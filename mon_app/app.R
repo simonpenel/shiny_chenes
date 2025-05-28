@@ -21,6 +21,7 @@ useShinyjs(),
   tags$style(type = "text/css",
     "html, body {width:100%;height:100%}
     #plotyear { background-color: #ddd; opacity: 0.80;}
+    #plotsiteyear { background-color: #ddd; opacity: 0.80;}
     #barplot1 {opacity: 0.80;}
     #barplot2 {opacity: 0.80;}"
 
@@ -53,7 +54,7 @@ class = "panel panel-default", draggable = TRUE,
     ),
 
     fixedPanel(bottom=10, right = 350,
-        actionButton('plotBtn', 'Show/Hide Plot',
+        actionButton('plotBtn2', 'Show/Hide Plot 2',
         style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
     ),
     fixedPanel(bottom=10, right = 180,
@@ -64,7 +65,10 @@ class = "panel panel-default", draggable = TRUE,
         actionButton('barplotBtn2', 'Show/Hide Barplot 2',
         style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
     ),
-
+    fixedPanel(bottom=10, right = 500,
+        actionButton('plotBtn1', 'Show/Hide Plot 1',
+        style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
+    ),
 
 
     absolutePanel(id = 'plotyear', class = "panel panel-default", fixed = TRUE,
@@ -83,7 +87,7 @@ class = "panel panel-default", draggable = TRUE,
       plotOutput("plotHistoMax", height = 250),
     ),
     absolutePanel(id = 'plotsiteyear', class = "panel panel-default", fixed = TRUE,
-      draggable = TRUE, top = 10, left = "auto", right = 20, bottom = "auto",
+      draggable = TRUE, top = 10, left = "auto", right = 350, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("plotSitePerYear", height = 250),
     ),
@@ -268,8 +272,12 @@ plot_barplot_var <- function(df,var,main, ...){
 # SERVER
 server <- function(input, output, session) {
 
-  observeEvent(input$plotBtn, {
+  observeEvent(input$plotBtn2, {
     toggle('plotyear')
+  })
+
+  observeEvent(input$plotBtn1, {
+    toggle('plotsiteyear')
   })
 
   observeEvent(input$barplotBtn1, {
@@ -363,7 +371,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     #leafletProxy("map", data = get_summary(filteredData())) %>%
       leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
-      addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2), label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Cone" )
+      addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2), label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Fruits_m2" )
   })
 
 
