@@ -62,4 +62,23 @@ sum_site_val  = sum_site[sum_site$Site == site,]
 sum_site_val
 }
 toto <- get_summary_2(masting)
-print(toto)
+print(toto[1])
+print(toto[2])
+site_data <-toto[[1]]
+site_data <-site_data[order(site_data$Year),,drop=FALSE]
+
+print(site_data)
+nt   <- length(toto)
+col <- hcl.colors(nt, "Dark 2")
+type <- "b"
+pch <-19
+ylim <- c(0, max(site_data$Taux_moyen_arbres))
+xlim <- c(min(site_data$Year)-1, max(site_data$Year)+1)
+plot(site_data$Year, site_data$Taux_moyen_arbres, type = type, pch = pch, col = col[1], xlim=xlim, ylim = ylim, xlab = "lol", ylab = "lol", main = "lol")
+#plot(site_data$Year, site_data$Taux_moyen_arbres, type = type, pch = pch, col = col[1])
+
+for(j in 2:nt) {
+site_data <-toto[[j]]
+site_data <-site_data[order(site_data$Year),,drop=FALSE]
+points(site_data$Year, site_data$Taux_moyen_arbres, type = type, pch = pch, col = col[j])
+}
