@@ -312,6 +312,11 @@ server <- function(input, output, session) {
     localization = "fr",
     activeColor = "red",
     completedColor = "red") %>%
+      addLayersControl(
+    overlayGroups = c("Fruits_m2","Croissance"),
+    options = layersControlOptions(collapsed = FALSE)
+  )  %>%
+  hideGroup("Croissance")%>%
     fitBounds(~min(Longitude) - 0.001 , ~min(Latitude) - 0.001, ~max(Longitude) + 0.001 , ~max(Latitude) + 0.001)
   })
 
