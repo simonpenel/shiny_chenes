@@ -22,6 +22,7 @@ useShinyjs(),
     "html, body {width:100%;height:100%}
     #plotyear { background-color: #ddd; opacity: 0.80;}
     #plotsiteyear { background-color: #ddd; opacity: 0.80;}
+    #plotsiteyearBAI { background-color: #ddd; opacity: 0.80;}
     #barplot1 {opacity: 0.80;}
     #barplot2 {opacity: 0.80;}"
 
@@ -92,6 +93,12 @@ class = "panel panel-default", draggable = TRUE,
       plotOutput("plotSitePerYear", height = 250),
     ),
 
+    absolutePanel(id = 'plotsiteyearBAI', class = "panel panel-default", fixed = TRUE,
+      draggable = TRUE, top = 260, left = "auto", right = 350, bottom = "auto",
+      width = 330, height = "auto",
+      plotOutput("plotSitePerYearBAI", height = 250),
+    ),
+
   ),
 )
 
@@ -150,11 +157,11 @@ mean_years_select_in_map <- function(input) {
 
 # Fonction qui renvoie une df avec la valeur moyenne sur les arbres par site/an
 # ------------------------------------------------------------------------------
-get_summary_site <- function(m){
+get_summary_site <- function(m,var){
   sum_site  <- data.frame(Site=m$Site,Year=m$Year,Moyenne_sur_les_arbres=0)
   sum_site <- unique(sum_site)
   sites <- unique(sum_site$Site)
-  test <- lapply(sites,extract_site,data=m,sum_site=sum_site)
+  test <- lapply(sites,extract_site,data=m,sum_site=sum_site,var=var)
   test
 }
 
@@ -169,10 +176,10 @@ mean_over_trees <- function(year,data,var){
 # Fonction qui recupere les donnes pour un site, et renvoie une df
 # avec les valeurs moyenne d'une variable sur les arbres par annee
 # -----------------------------------------------------------------
-extract_site <- function(site,data,sum_site) {
+extract_site <- function(site,data,sum_site,var) {
   test <- data[data$Site == site ,]
   years <- unique(test$Year)
-  mean_year <- sapply(years,mean_over_trees,data=test,var="Total_Fruits_per_m2")
+  mean_year <- sapply(years,mean_over_trees,data=test,var=var)
   sum_site[sum_site$Site == site,]$Moyenne_sur_les_arbres = mean_year
   sum_site_val  = sum_site[sum_site$Site == site,]
   sum_site_val
@@ -280,6 +287,7 @@ server <- function(input, output, session) {
 
   observeEvent(input$plotBtn1, {
     toggle('plotsiteyear')
+    toggle('plotsiteyearBAI')
   })
 
   observeEvent(input$barplotBtn1, {
@@ -409,8 +417,18 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     data_plot <-filteredData()
     if (nrow(data_plot) > 0) {
 
-      toto <- get_summary_site(data_plot)
+      toto <- get_summary_site(data_plot,"Total_Fruits_per_m2")
       plot_site_years_var(toto,"Moyenne_sur_les_arbres", "Nb de fruit par m2 (moyenne)", "Nb de fruit par m2")
+  }
+  })
+
+  # Output the plot
+  output$plotSitePerYearBAI <- renderPlot({
+    data_plot <-filteredData()
+    if (nrow(data_plot) > 0) {
+
+      toto <- get_summary_site(data_plot,"BAI")
+      plot_site_years_var(toto,"Moyenne_sur_les_arbres", "BAI (moyenne)", "BAI")
   }
   })
 
