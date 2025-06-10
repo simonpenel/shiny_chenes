@@ -119,6 +119,8 @@ get_summary <- function(m){
   sum_mast$maxtauxfructif = c(test)
   test = sapply(arbres,max_var, var="Total_Fruits_per_m2", data = m)
   sum_mast$maxTotal_Fruits_per_m2 = c(test)
+  test = sapply(arbres,mean_var, var="BAI", data = m)
+  sum_mast$meanBAI = c(test)
   sum_mast
 
 }
@@ -316,7 +318,7 @@ server <- function(input, output, session) {
     overlayGroups = c("Fruits_m2","Croissance"),
     options = layersControlOptions(collapsed = FALSE)
   )  %>%
-  hideGroup("Croissance")%>%
+  # hideGroup("Croissance")%>%
     fitBounds(~min(Longitude) - 0.001 , ~min(Latitude) - 0.001, ~max(Longitude) + 0.001 , ~max(Latitude) + 0.001)
   })
 
@@ -376,7 +378,10 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     #leafletProxy("map", data = get_summary(filteredData())) %>%
       leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
-      addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2), label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Fruits_m2" )
+      addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2),stroke= FALSE, label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Fruits_m2" )  %>%
+      #addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), dashArray = "50", label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>BAI moyen = ",meanBAI,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
+      addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), fill = FALSE, label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>BAI moyen = ",meanBAI,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
+
   })
 
 
