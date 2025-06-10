@@ -116,11 +116,16 @@ class = "panel panel-default", draggable = TRUE,
       width = 330, height = "auto",
       plotOutput("plotPerYear", height = 250),
     ),
+
     absolutePanel(id = 'barplot1', class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 260, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("plotHisto", height = 250),
     ),
+
+    bsCollapsePanel("Panel 2", "This panel has a generic plot. ",
+                       "and a 'success' style.", plotOutput("plotHisto"), style = "success"),
+
     absolutePanel(id = 'barplot2', class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 510, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
