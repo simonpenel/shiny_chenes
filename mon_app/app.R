@@ -34,9 +34,42 @@ useShinyjs(),
 
   ),
 
+  tags$script('
+      $(document).ready(function () {
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
+
+        function onError (err) {
+          Shiny.onInputChange("geolocation", false);
+        }
+
+        function onSuccess (position) {
+          setTimeout(function () {
+            var coords = position.coords;
+            console.log(coords.latitude + ", " + coords.longitude);
+            Shiny.onInputChange("geolocation", true);
+            Shiny.onInputChange("lat", coords.latitude);
+            Shiny.onInputChange("long", coords.longitude);
+          }, 1100)
+        }
+      });
+              '),
+
 leafletOutput("map", width = "100%", height = "100%"),
+
+#absolutePanel(bottom = 50, right = 300, width = 400,  height = 150,
+#class = "panel panel-default", draggable = TRUE,
+#fluidRow(column(width = 2,
+#                verbatimTextOutput("lat"),
+#                verbatimTextOutput("long"),
+#                verbatimTextOutput("geolocation"))
+#),
+#),
+
 absolutePanel(bottom = 10, left = 10, width = 400,  height = 200,
 class = "panel panel-default", draggable = TRUE,
+
+
+
 
 
     #downloadButton("download"),
@@ -462,6 +495,18 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   }
   })
 
+
+  output$lat <- renderPrint({
+      input$lat
+    })
+
+    output$long <- renderPrint({
+      input$long
+    })
+
+    output$geolocation <- renderPrint({
+      input$geolocation
+    })
 }
 
 shinyApp(ui, server)
