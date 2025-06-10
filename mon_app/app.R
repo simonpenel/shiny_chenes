@@ -7,6 +7,8 @@ library(shinydashboard)
 library(shinyWidgets)
 library(shinyjs)
 
+library(jsonlite)
+
 # Masting data
 options(encoding="latin1")
 
@@ -14,6 +16,10 @@ masting <- read.csv("merged.csv",sep=";")
 
 sites <-unique(masting$Site)
 print(sites)
+
+#country_boundaries <- read_json("reserves-naturelles-regionales-rnr.geojson")
+#country_boundaries <- read_json("Parcs_naturels_regionaux_de_France.geojson")
+#country_boundaries <- read_json("onf_forets-publiques.json")
 
 # UI
 ui <- bootstrapPage(
@@ -313,6 +319,14 @@ server <- function(input, output, session) {
     # entire map is being torn down and recreated).
     leaflet(filteredData()) %>%
     addTiles(options = tileOptions(minZoom = 0, maxZoom = 25)) %>%
+#    addGeoJSON(
+#        country_boundaries,
+#        opacity = 1,
+#        dashArray = "9",
+#        fillOpacity = 0.5,
+#        color = "black",
+#        weight = 1
+#      )  %>%
     addScaleBar(position = 'topleft') %>%
     addMeasure(position = "topleft",
     primaryLengthUnit = "meters",
