@@ -6,7 +6,7 @@ library(shinydashboard)
 
 library(shinyWidgets)
 library(shinyjs)
-
+library(shinyBS)
 library(jsonlite)
 
 # Masting data
