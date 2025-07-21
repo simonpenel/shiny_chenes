@@ -123,8 +123,6 @@ class = "panel panel-default", draggable = TRUE,
       plotOutput("plotHisto", height = 250),
     ),
 
-    bsCollapsePanel("Panel 2", "This panel has a generic plot. ",
-                       "and a 'success' style.", plotOutput("plotHisto"), style = "success"),
 
     absolutePanel(id = 'barplot2', class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 510, left = "auto", right = 20, bottom = "auto",
