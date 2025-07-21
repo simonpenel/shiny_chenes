@@ -34,25 +34,7 @@ useShinyjs(),
 
   ),
 
-  tags$script('
-      // $(document).ready(function () {
-      //   navigator.geolocation.getCurrentPosition(onSuccess, onError);
-      //
-      //   function onError (err) {
-      //     Shiny.onInputChange("geolocation", false);
-      //   }
-      //
-      //   function onSuccess (position) {
-      //     setTimeout(function () {
-      //       var coords = position.coords;
-      //       console.log(coords.latitude + ", " + coords.longitude);
-      //       Shiny.onInputChange("geolocation", true);
-      //       Shiny.onInputChange("lat", coords.latitude);
-      //       Shiny.onInputChange("long", coords.longitude);
-      //     }, 1100)
-      //   }
-      // }
-    );'),
+
 
 leafletOutput("map", width = "100%", height = "100%"),
 
@@ -207,6 +189,16 @@ get_summary_site <- function(m,var){
   test
 }
 
+# Fonction qui renvoie une df avec la position moyenne  par site
+# ------------------------------------------------------------------------------
+get_mean_positions_site <- function(m){
+  sum_pos_site  <- data.frame(Site=m$Site,Longitude_moyenne=0,Latitude_moyenne=0)
+  sum_pos_site <- unique(sum_site)
+  sites <- unique(sum_pos_site$Site)
+  test <- lapply(sites,extract_mean_position,data=m)
+  test
+}
+
 # Fonction qui calcule la valeur moyenne pour une annee donnee
 # ------------------------------------------------------------
 mean_over_trees <- function(year,data,var){
@@ -225,6 +217,20 @@ extract_site <- function(site,data,sum_site,var) {
   sum_site[sum_site$Site == site,]$Moyenne_sur_les_arbres = mean_year
   sum_site_val  = sum_site[sum_site$Site == site,]
   sum_site_val
+}
+
+
+# Fonction qui recupere les donnes pour un site, et renvoie une df
+# avec les valeurs moyenne des longitude et latitudes
+# -----------------------------------------------------------------
+extract_mean_position <- function(site,data) {
+  test <- data[data$Site == site ,]
+  mean_longitude <- mean(unique(test$Longitude))
+  mean_latitude <- mean(unique(test$Latitude))
+  mean_positions[mean_positions$Site == site,]$Longitude_moyenne = mean_longitude
+  mean_positions[mean_positions$Site == site,]$Latitude_moyenne = mean_latitude
+  mean_positions_val  = mean_positions[mean_positions$Site == site,]
+  mean_positions_val
 }
 
 # Fonction d'affichage
@@ -396,6 +402,12 @@ server <- function(input, output, session) {
     & masting$Site %in% input$select_sites, ])
   })
 
+  # This will be used for the map.
+  positionData <- reactive({
+    get_mean_positions_site(
+    masting[masting$Site %in% input$select_sites, ])
+  })
+
   scale_circle <- reactive({
     input$circle_size[1]
   })
@@ -436,6 +448,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     #leafletProxy("map", data = get_summary(filteredData())) %>%
       leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
+      addMarkers(data = sumarizedData())  %>%
       addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2),stroke= FALSE, label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>BAI moyen = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Fruits_m2" )  %>%
       #addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), dashArray = "50", label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>BAI moyen = ",meanBAI,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
       addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), fill = FALSE, label = ~paste(Arbre, ":<br>BAI moyen = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
