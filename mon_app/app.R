@@ -193,9 +193,9 @@ get_summary_site <- function(m,var){
 # ------------------------------------------------------------------------------
 get_mean_positions_site <- function(m){
   sum_pos_site  <- data.frame(Site=m$Site,Longitude_moyenne=0,Latitude_moyenne=0)
-  sum_pos_site <- unique(sum_site)
+  sum_pos_site <- unique(sum_pos_site)
   sites <- unique(sum_pos_site$Site)
-  test <- lapply(sites,extract_mean_position,data=m)
+  test <- lapply(sites,extract_mean_position,data=m,mean_positions=sum_pos_site)
   test
 }
 
@@ -223,7 +223,7 @@ extract_site <- function(site,data,sum_site,var) {
 # Fonction qui recupere les donnes pour un site, et renvoie une df
 # avec les valeurs moyenne des longitude et latitudes
 # -----------------------------------------------------------------
-extract_mean_position <- function(site,data) {
+extract_mean_position <- function(site,data,mean_positions) {
   test <- data[data$Site == site ,]
   mean_longitude <- mean(unique(test$Longitude))
   mean_latitude <- mean(unique(test$Latitude))
