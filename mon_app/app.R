@@ -449,9 +449,9 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
       leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
       addMarkers(data = sumarizedData())  %>%
-      addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2),stroke= FALSE, label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>BAI moyen = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Fruits_m2" )  %>%
-      #addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), dashArray = "50", label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>BAI moyen = ",meanBAI,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
-      addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), fill = FALSE, label = ~paste(Arbre, ":<br>BAI moyen = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
+      addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2),stroke= FALSE, label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Fruits_m2" )  %>%
+      #addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), dashArray = "50", label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
+      addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), fill = FALSE, label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
 
   })
 
@@ -481,7 +481,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     if (nrow(data_plot) > 0) {
 
       toto <- get_summary_site(data_plot,"Total_Fruits_per_m2")
-      plot_site_years_var(toto,"Moyenne_sur_les_arbres", "Nb de fruit par m2 (moyenne)", "Nb de fruit par m2")
+      plot_site_years_var(toto,"Moyenne_sur_les_arbres", "Nb de fruit par m2 (moyenne par site)", "Nb de fruit par m2")
   }
   })
 
@@ -491,7 +491,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     if (nrow(data_plot) > 0) {
 
       toto <- get_summary_site(data_plot,"BAI")
-      plot_site_years_var(toto,"Moyenne_sur_les_arbres", "BAI (moyenne)", "BAI")
+      plot_site_years_var(toto,"Moyenne_sur_les_arbres", "croissance terriere (moyenne par site)", "BAI")
   }
   })
 
