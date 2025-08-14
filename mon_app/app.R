@@ -37,17 +37,20 @@ ui <- bootstrapPage(
 
   leafletOutput("map", width = "100%", height = "100%"),
 
-  absolutePanel(bottom = 10, left = 10, width = 400,  height = 200,
-    class = "panel panel-default", draggable = TRUE,
-
+  absolutePanel(bottom = 10, left = 10, width = 400,  height = 150,
+    class = "panel panel-default", draggable = TRUE, 
     #downloadButton("download"), # supprime pour l'instant
-
     sliderInput("range", "Year", min(masting$Year), max(masting$Year),
       value = range(masting$Year), step = 1, sep ="", width=600
     ),
+  ),
 
+    absolutePanel( class = "panel panel-default",
+      draggable = TRUE, bottom = 10, left = 420,
+      width = 120, height =  150,
     sliderInput("circle_size", "Circle size", 1, 50,
       value = 5, step = 1, sep ="", width=600
+    ),
     ),
 
     absolutePanel( class = "panel panel-default", fixed = TRUE,
@@ -131,7 +134,6 @@ ui <- bootstrapPage(
       bottom = "auto", width = 330, height = "auto",
       plotOutput("plotSitePerYearBAI", height = 250),
     ),
-  ),
 )
 
 
