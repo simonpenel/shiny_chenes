@@ -23,7 +23,8 @@ print(sites)
 
 # UI
 ui <- bootstrapPage(
-useShinyjs(),
+  useShinyjs(),
+  
   tags$style(type = "text/css",
     "html, body {width:100%;height:100%}
     #plotyear { background-color: #ddd; opacity: 0.80;}
@@ -34,175 +35,211 @@ useShinyjs(),
 
   ),
 
+  leafletOutput("map", width = "100%", height = "100%"),
 
+  absolutePanel(bottom = 10, left = 10, width = 400,  height = 200,
+    class = "panel panel-default", draggable = TRUE,
 
-leafletOutput("map", width = "100%", height = "100%"),
-
-#absolutePanel(bottom = 50, right = 300, width = 400,  height = 150,
-#class = "panel panel-default", draggable = TRUE,
-#fluidRow(column(width = 2,
-#                verbatimTextOutput("lat"),
-#                verbatimTextOutput("long"),
-#                verbatimTextOutput("geolocation"))
-#),
-#),
-
-absolutePanel(bottom = 10, left = 10, width = 400,  height = 200,
-class = "panel panel-default", draggable = TRUE,
-
-
-
-
-
-    #downloadButton("download"),
+    #downloadButton("download"), # supprime pour l'instant
 
     sliderInput("range", "Year", min(masting$Year), max(masting$Year),
       value = range(masting$Year), step = 1, sep ="", width=600
     ),
 
     sliderInput("circle_size", "Circle size", 1, 50,
-     value = 5, step = 1, sep ="", width=600
+      value = 5, step = 1, sep ="", width=600
     ),
 
     absolutePanel( class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 180, left = 10, bottom = "auto",
       width = 120, height = "auto",
-      prettyCheckboxGroup("select_sites", "Sites", choices = sites, selected=sites,status="primary"),
-      actionButton('unselect_all', 'Unselect all',
-        style="opacity: .80; color:black; background-color: white; border-color: white"),
-      actionButton('select_all', 'Select all',
-        style="opacity: .80; color: black; background-color: white; border-color: white"),
+
+      prettyCheckboxGroup("select_sites", "Sites",
+        choices = sites, selected = sites, status = "primary"
+      ),
+
+      actionButton("unselect_all", "Unselect all",
+        style = "opacity: .80; color:black;
+         background-color: white; border-color: white"
+      ),
+
+      actionButton("select_all", "Select all",
+        style = "opacity: .80; color: black;
+        background-color: white; border-color: white"
+      ),
 
     ),
 
-    fixedPanel(bottom=10, right = 350,
-        actionButton('plotBtn2', 'Show/Hide Plot 2',
-        style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
+    fixedPanel(bottom = 10, right = 350,
+      actionButton("plotBtn2", "Show/Hide Plot 2",
+        style = "opacity: .80; color: #fff; background-color: #a662e3;
+        border-color: #a153e5"
+      )
     ),
-    fixedPanel(bottom=10, right = 180,
-        actionButton('barplotBtn1', 'Show/Hide Barplot 1',
-        style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
+
+    fixedPanel(bottom = 10, right = 180,
+      actionButton("barplotBtn1", "Show/Hide Barplot 1",
+        style = "opacity: .80; color: #fff; background-color: #a662e3;
+        border-color: #a153e5"
+      )
     ),
-    fixedPanel(bottom=10, right = 10,
-        actionButton('barplotBtn2', 'Show/Hide Barplot 2',
-        style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
+
+    fixedPanel(bottom = 10, right = 10,
+      actionButton("barplotBtn2", "Show/Hide Barplot 2",
+        style = "opacity: .80; color: #fff; background-color: #a662e3;
+        border-color: #a153e5"
+      )
     ),
-    fixedPanel(bottom=10, right = 500,
-        actionButton('plotBtn1', 'Show/Hide Plot 1',
-        style="opacity: .80; color: #fff; background-color: #a662e3; border-color: #a153e5")
+
+    fixedPanel(bottom = 10, right = 500,
+      actionButton("plotBtn1", "Show/Hide Plot 1",
+        style = "opacity: .80; color: #fff; background-color: #a662e3;
+        border-color: #a153e5"
+      )
     ),
 
 
-    absolutePanel(id = 'plotyear', class = "panel panel-default", fixed = TRUE,
+    absolutePanel(id = "plotyear", class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 10, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("plotPerYear", height = 250),
     ),
 
-    absolutePanel(id = 'barplot1', class = "panel panel-default", fixed = TRUE,
+    absolutePanel(id = "barplot1", class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 260, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("plotHisto", height = 250),
     ),
 
 
-    absolutePanel(id = 'barplot2', class = "panel panel-default", fixed = TRUE,
+    absolutePanel(id = "barplot2", class = "panel panel-default", fixed = TRUE,
       draggable = TRUE, top = 510, left = "auto", right = 20, bottom = "auto",
       width = 330, height = "auto",
       plotOutput("plotHistoMax", height = 250),
     ),
-    absolutePanel(id = 'plotsiteyear', class = "panel panel-default", fixed = TRUE,
-      draggable = TRUE, top = 10, left = "auto", right = 350, bottom = "auto",
-      width = 330, height = "auto",
+
+    absolutePanel(id = "plotsiteyear", class = "panel panel-default",
+      fixed = TRUE, draggable = TRUE, top = 10, left = "auto",
+      right = 350, bottom = "auto", width = 330, height = "auto",
       plotOutput("plotSitePerYear", height = 250),
     ),
 
-    absolutePanel(id = 'plotsiteyearBAI', class = "panel panel-default", fixed = TRUE,
-      draggable = TRUE, top = 260, left = "auto", right = 350, bottom = "auto",
-      width = 330, height = "auto",
+    absolutePanel(id = "plotsiteyearBAI", class = "panel panel-default",
+      fixed = TRUE, draggable = TRUE, top = 260, left = "auto", right = 350,
+      bottom = "auto", width = 330, height = "auto",
       plotOutput("plotSitePerYearBAI", height = 250),
     ),
-
   ),
 )
 
 
-mean_var <- function(x, var,data) {
-    mean(data[data$Arbre == x,][[var]])
-    }
+# Fonctions
 
-max_var <- function(x, var,data) {
-        max(data[data$Arbre == x,][[var]])
-        }
+# Fonction moyenne
+# Calcule la moyenne de la variable var pour l'arbre x dans les donnees data 
+# ----------------
+mean_var <- function(x, var, data) {
+  mean(data[data$Arbre == x, ][[var]])
+}
 
+# Fonction max
+# Calcule le max de la variable var pour l'arbre x dans les donnees data 
+# ------------
+max_var <- function(x, var, data) {
+  max(data[data$Arbre == x, ][[var]])
+}
 
-get_summary <- function(m){
-  sum_mast  <- data.frame(Arbre=m$Arbre,Latitude=m$Latitude,Longitude=m$Longitude)
-  sum_mast <- unique(sum_mast)
-  arbres <- sum_mast$Arbre
-  test = sapply(arbres,mean_var, var="tauxfructif", data = m)
-  sum_mast$meantauxfructif = c(test)
-  test = sapply(arbres,mean_var, var="Total_Flowers_per_m2", data = m)
-  sum_mast$meanTotal_Flowers_per_m2 = test
-  test = sapply(arbres,mean_var, var="Total_Fruits_per_m2", data = m)
-  sum_mast$meanTotal_Fruits_per_m2 = c(test)
-  test = sapply(arbres,max_var, var="tauxfructif", data = m)
-  sum_mast$maxtauxfructif = c(test)
-  test = sapply(arbres,max_var, var="Total_Fruits_per_m2", data = m)
-  sum_mast$maxTotal_Fruits_per_m2 = c(test)
-  test = sapply(arbres,mean_var, var="BAI", data = m)
-  sum_mast$meanBAI = c(test)
+# Crée un df  des valeurs moyennes et maximum sur une  periode donnée:
+# (toutes ces valeurs ne seront pas forcement afcichees, a discuter)
+# -------------------------------------------------------------------
+get_summary <- function(m) {
+  sum_mast  <- data.frame(
+    Arbre = m$Arbre,
+    Latitude = m$Latitude,
+    Longitude = m$Longitude
+  )
+  sum_mast <- unique(sum_mast)  # Vire la redondance des années
+  arbres <- sum_mast$Arbre      # Liste des arbres
+  # moyenne de tauxfructif sur la periode pour chaque arbre
+  test <- sapply(arbres, mean_var, var = "tauxfructif", data = m)
+  sum_mast$meantauxfructif <- c(test)
+  # moyenne de Total_Flowers_per_m2 sur la periode pour chaque arbre
+  test <- sapply(arbres, mean_var, var = "Total_Flowers_per_m2", data = m)
+  sum_mast$meanTotal_Flowers_per_m2 <- test
+  # moyenne de Total_Fruits_per_m2 sur la periode pour chaque arbre
+  test <- sapply(arbres, mean_var, var = "Total_Fruits_per_m2", data = m)
+  sum_mast$meanTotal_Fruits_per_m2 <- c(test)
+  # max de tauxfructif sur la periode pour chaque arbre
+  test <- sapply(arbres, max_var, var = "tauxfructif", data = m)
+  sum_mast$maxtauxfructif <- c(test)
+  # max de Total_Fruits_per_m2 sur la periode pour chaque arbre
+  test <- sapply(arbres, max_var, var = "Total_Fruits_per_m2", data = m)
+  sum_mast$maxTotal_Fruits_per_m2 <- c(test)
+  # moyenne de BAI sur la periode pour chaque arbre
+  test <- sapply(arbres, mean_var, var = "BAI", data = m)
+  sum_mast$meanBAI <- c(test)
   sum_mast
 
 }
 
 
-# Select the data per site
 
-
-# Select the data on the area, the year, the variable and the species
+# Selection les données sur la base de la surface affichee, l'année et le site
 select_in_map <- function(input) {
   bounds <- input$map_bounds
   latRng <- range(bounds$north, bounds$south)
   lngRng <- range(bounds$east, bounds$west)
-  selected_data<-subset(masting,
+  selected_data <- subset(masting,
     Latitude >= latRng[1] & Latitude <= latRng[2] &
     Longitude >= lngRng[1] & Longitude <= lngRng[2] &
     Year >= input$range[1] &
     Year <= input$range[2] &
     Site %in% input$select_sites
-    )
+  )
   selected_data
 }
 
-mean_years_select_in_map <- function(input) {
-    select_in_map(input)
-}
+#mean_years_select_in_map <- function(input) {
+#    select_in_map(input)
+#}
 
-# Fonction qui renvoie une df avec la valeur moyenne sur les arbres par site/an
-# ------------------------------------------------------------------------------
-get_summary_site <- function(m,var){
-  sum_site  <- data.frame(Site=m$Site,Year=m$Year,Moyenne_sur_les_arbres=0)
+# Fonction qui renvoie une df avec la valeur moyenne de var sur les arbres par site/an
+# ------------------------------------------------------------------------------------
+get_summary_site <- function(m, var) {
+  sum_site  <- data.frame(
+    Site = m$Site,
+    Year = m$Year,
+    Moyenne_sur_les_arbres = 0
+  )
   sum_site <- unique(sum_site)
   sites <- unique(sum_site$Site)
-  test <- lapply(sites,extract_site,data=m,sum_site=sum_site,var=var)
+  test <- lapply(sites, extract_site, data = m, sum_site = sum_site, var = var)
   test
 }
 
 # Fonction qui renvoie une df avec la position moyenne  par site
-# ------------------------------------------------------------------------------
+# ---------------------------------------------------------------
 get_mean_positions_site <- function(m){
-  sum_pos_site  <- data.frame(Site=m$Site,Longitude_moyenne=0,Latitude_moyenne=0)
+  sum_pos_site  <- data.frame(
+    Site = m$Site,
+    Longitude_moyenne = 0,
+    Latitude_moyenne = 0
+  )
   sum_pos_site <- unique(sum_pos_site)
   sites <- unique(sum_pos_site$Site)
-  test <- lapply(sites,extract_mean_position,data=m,mean_positions=sum_pos_site)
+  test <- lapply(
+    sites,
+    extract_mean_position,
+    data = m,
+    mean_positions = sum_pos_site
+  )
   test
 }
 
 # Fonction qui calcule la valeur moyenne pour une annee donnee
 # ------------------------------------------------------------
-mean_over_trees <- function(year,data,var){
-  taux = data[data$Year == year ,][[var]]
+mean_over_trees <- function(year, data, var) {
+  taux <- data[data$Year == year, ][[var]]
   mean_taux <- mean(taux)
   mean_taux
 }
@@ -210,12 +247,12 @@ mean_over_trees <- function(year,data,var){
 # Fonction qui recupere les donnes pour un site, et renvoie une df
 # avec les valeurs moyenne d'une variable sur les arbres par annee
 # -----------------------------------------------------------------
-extract_site <- function(site,data,sum_site,var) {
-  test <- data[data$Site == site ,]
+extract_site <- function(site, data, sum_site, var) {
+  test <- data[data$Site == site, ]
   years <- unique(test$Year)
-  mean_year <- sapply(years,mean_over_trees,data=test,var=var)
-  sum_site[sum_site$Site == site,]$Moyenne_sur_les_arbres = mean_year
-  sum_site_val  = sum_site[sum_site$Site == site,]
+  mean_year <- sapply(years, mean_over_trees, data = test, var = var)
+  sum_site[sum_site$Site == site, ]$Moyenne_sur_les_arbres <- mean_year
+  sum_site_val  <- sum_site[sum_site$Site == site, ]
   sum_site_val
 }
 
@@ -223,47 +260,48 @@ extract_site <- function(site,data,sum_site,var) {
 # Fonction qui recupere les donnes pour un site, et renvoie une df
 # avec les valeurs moyenne des longitude et latitudes
 # -----------------------------------------------------------------
-extract_mean_position <- function(site,data,mean_positions) {
-  test <- data[data$Site == site ,]
+extract_mean_position <- function(site, data, mean_positions) {
+  test <- data[data$Site == site, ]
   mean_longitude <- mean(unique(test$Longitude))
   mean_latitude <- mean(unique(test$Latitude))
-  mean_positions[mean_positions$Site == site,]$Longitude_moyenne = mean_longitude
-  mean_positions[mean_positions$Site == site,]$Latitude_moyenne = mean_latitude
-  mean_positions_val  = mean_positions[mean_positions$Site == site,]
+  mean_positions[mean_positions$Site == site, ]$Longitude_moyenne <- mean_longitude
+  mean_positions[mean_positions$Site == site, ]$Latitude_moyenne <- mean_latitude
+  mean_positions_val  <- mean_positions[mean_positions$Site == site, ]
   mean_positions_val
 }
 
 # Fonction d'affichage
 # --------------------
-plot_site_years_var <- function(df,var, main, ylab, type = "b", pch = 19,
-xlab = "Year", leg = TRUE, posleg = "topleft", ...){
+plot_site_years_var <- function(df, var, main,
+  ylab, type = "b", pch = 19, xlab = "Year", leg = TRUE, posleg = "topleft", ...
+) {
   nt   <- length(df)
   col <- hcl.colors(nt, "Dark 2")
   type <- "b"
-  pch <-19
+  pch <- 19
 
   # Recherche des maxs
-  site_data <-df[[1]]
+  site_data <- df[[1]]
   ymax_all <- max(site_data[[var]])
   xmax_all <- max(site_data$Year)
-  xmin_all  <- min(site_data$Year)
+  xmin_all <- min(site_data$Year)
 
   if (nt > 1) {
-  for(j in 2:nt) {
-    site_data <-df[[j]]
-    ymax <- max(site_data[[var]])
-    xmax <- max(site_data$Year)
-    xmin <- min(site_data$Year)
-    ymax_all <- max(c(ymax,ymax_all))
-    xmax_all <- max(c(xmax,xmax_all))
-    xmin_all  <- min(c(xmin,xmin_all))
-  }
+    for (j in 2:nt) {
+      site_data <- df[[j]]
+      ymax <- max(site_data[[var]])
+      xmax <- max(site_data$Year)
+      xmin <- min(site_data$Year)
+      ymax_all <- max(c(ymax, ymax_all))
+      xmax_all <- max(c(xmax, xmax_all))
+      xmin_all  <- min(c(xmin, xmin_all))
+    }
   }
 
-  site_data <-df[[1]]
-  site_data <-site_data[order(site_data$Year),,drop=FALSE]
+  site_data <- df[[1]]
+  site_data <- site_data[order(site_data$Year), , drop = FALSE]
 
-  ylim <- c(0,ymax_all)
+  ylim <- c(0, ymax_all)
   xlim <- c(xmin_all - 3, xmax_all + 1)
 
   plot(site_data$Year, site_data[[var]], type = type, pch = pch, col = col[1],
@@ -396,63 +434,56 @@ server <- function(input, output, session) {
 
   # This will be used for the map.
   sumarizedData <- reactive({
-    get_summary(
-      masting[masting$Year >= input$range[1]
-    & masting$Year <= input$range[2]
-    & masting$Site %in% input$select_sites, ])
+    get_summary(masting[
+      masting$Year >= input$range[1]
+      & masting$Year <= input$range[2]
+      & masting$Site %in% input$select_sites,
+    ])
   })
 
   # This will be used for the map.
   positionData <- reactive({
-    get_mean_positions_site(
-    masting[masting$Site %in% input$select_sites, ])
+    get_mean_positions_site(masting[masting$Site %in% input$select_sites, ])
   })
 
   scale_circle <- reactive({
     input$circle_size[1]
   })
 
-
-
 pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
 
-
-
   echelle <- function(x){
-      print("X=")
-      print(x)
-      print(length(x))
-      if (length(x) > 0)  {
-        (scale_circle() - 1 ) * x + 1
-      }
-      else {
-        x
-      }
+    print("X=")
+    print(x)
+    print(length(x))
+    if (length(x) > 0)  {
+      (scale_circle() - 1) * x + 1
     }
+    else {
+      x
+    }
+  }
 
-  echelle_sqrt <- function(x){
-      print("X=")
-      print(x)
-      print(length(x))
-      if (length(x) > 0)  {
-        sqrt((scale_circle() - 1 ) * x )
-      }
-      else {
-        x
-      }
+  echelle_sqrt <- function(x) {
+    print("X=")
+    print(x)
+    print(length(x))
+    if (length(x) > 0)  {
+      sqrt((scale_circle() - 1 ) * x )
     }
+    else {
+      x
+    }
+  }
 
 
   observe({
-    #leafletProxy("map", data = mean_years_filteredData()) %>%
-    #leafletProxy("map", data = get_summary(filteredData())) %>%
-      leafletProxy("map", data = sumarizedData()) %>%
+    leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
       addMarkers(data = sumarizedData())  %>%
       addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2),stroke= FALSE, label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Fruits_m2" )  %>%
       #addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), dashArray = "50", label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
       addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), fill = FALSE, label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
-
   })
 
 
