@@ -526,8 +526,8 @@ server <- function(input, output, session) {
       plot_years_var(
         data_plot,
         "Total_Fruits_per_m2",
-        "Nombre de fruits au m2 au cours du temps",
-        "Nombre de fruits au m2"
+        "Nb de fruits au m2 au cours du temps",
+        "Nb de fruits au m2"
       )
     }
   })
@@ -567,7 +567,7 @@ server <- function(input, output, session) {
       plot_barplot_var(
         data_plot,
         "meanTotal_Fruits_per_m2",
-        "Nombre de fruits au m2 moyen par arbre"
+        "Nb de fruits au m2 moyen par arbre"
       )
     }
   })
@@ -579,7 +579,7 @@ server <- function(input, output, session) {
       plot_barplot_var(
         data_plot,
         "maxTotal_Fruits_per_m2",
-        "Nombre de fruits au m2 maximum par arbre"
+        "Nb de fruits au m2 maximum par arbre"
       )
     }
   })
