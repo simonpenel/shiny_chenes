@@ -41,99 +41,96 @@ ui <- bootstrapPage(
     class = "panel panel-default", draggable = TRUE, 
     #downloadButton("download"), # supprime pour l'instant
     sliderInput("range", "Année", min(masting$Year), max(masting$Year),
-      value = range(masting$Year), step = 1, sep ="", width=600
+      value = range(masting$Year), step = 1, sep = "", width = 600
     ),
   ),
 
-    absolutePanel( class = "panel panel-default",
-      draggable = TRUE, bottom = 10, left = 420,
-      width = 120, height =  150,
+  absolutePanel( class = "panel panel-default",
+    draggable = TRUE, bottom = 10, left = 420,
+    width = 120, height =  150,
     sliderInput("circle_size", "Taille des cercles", 1, 20,
-      value = 5, step = 1, sep ="", width=600
+      value = 5, step = 1, sep = "", width = 600
     ),
+  ),
+
+  absolutePanel( class = "panel panel-default", fixed = TRUE,
+    draggable = TRUE, top = 180, left = 10, bottom = "auto",
+    width = 120, height = "auto",
+    prettyCheckboxGroup("select_sites", "Sites",
+      choices = sites, selected = sites, status = "primary"
     ),
 
-    absolutePanel( class = "panel panel-default", fixed = TRUE,
-      draggable = TRUE, top = 180, left = 10, bottom = "auto",
-      width = 120, height = "auto",
-
-      prettyCheckboxGroup("select_sites", "Sites",
-        choices = sites, selected = sites, status = "primary"
-      ),
-
-      actionButton("unselect_all", "Supprime tout",
-        style = "opacity: .80; color:black;
-         background-color: white; border-color: white"
-      ),
-
-      actionButton("select_all", "Sélectionne tout",
-        style = "opacity: .80; color: black;
+    actionButton("unselect_all", "Supprime tout",
+      style = "opacity: .80; color:black;
         background-color: white; border-color: white"
-      ),
-
     ),
 
-
-    fixedPanel(bottom = 10, right = 500,
-      actionButton("plotBtn1", "Graphes par site",
-        style = "opacity: .80; color: #fff; background-color: #a662e3;
-        border-color: #a153e5"
-      )
+    actionButton("select_all", "Sélectionne tout",
+      style = "opacity: .80; color: black;
+      background-color: white; border-color: white"
     ),
 
-    fixedPanel(bottom = 10, right = 350,
-      actionButton("plotBtn2", "Graphe par arbre",
-        style = "opacity: .80; color: #fff; background-color: #a662e3;
-        border-color: #a153e5"
-      )
-    ),
-
-    fixedPanel(bottom = 10, right = 180,
-      actionButton("barplotBtn1", "Moyenne par arbre",
-        style = "opacity: .80; color: #fff; background-color: #a662e3;
-        border-color: #a153e5"
-      )
-    ),
-
-    fixedPanel(bottom = 10, right = 10,
-      actionButton("barplotBtn2", "Maximum par arbre",
-        style = "opacity: .80; color: #fff; background-color: #a662e3;
-        border-color: #a153e5"
-      )
-    ),
+  ),
 
 
+  fixedPanel(bottom = 10, right = 500,
+    actionButton("plotBtn1", "Graphes par site",
+      style = "opacity: .80; color: #fff; background-color: #a662e3;
+      border-color: #a153e5"
+    )
+  ),
 
-    absolutePanel(id = "plotyear", class = "panel panel-default", fixed = TRUE,
-      draggable = TRUE, top = 10, left = "auto", right = 20, bottom = "auto",
-      width = 330, height = "auto",
-      plotOutput("plotPerYear", height = 250),
-    ),
+  fixedPanel(bottom = 10, right = 350,
+    actionButton("plotBtn2", "Graphe par arbre",
+      style = "opacity: .80; color: #fff; background-color: #a662e3;
+      border-color: #a153e5"
+    )
+  ),
 
-    absolutePanel(id = "barplot1", class = "panel panel-default", fixed = TRUE,
-      draggable = TRUE, top = 260, left = "auto", right = 20, bottom = "auto",
-      width = 330, height = "auto",
-      plotOutput("plotHisto", height = 250),
-    ),
+  fixedPanel(bottom = 10, right = 180,
+    actionButton("barplotBtn1", "Moyenne par arbre",
+      style = "opacity: .80; color: #fff; background-color: #a662e3;
+      border-color: #a153e5"
+    )
+  ),
+
+  fixedPanel(bottom = 10, right = 10,
+    actionButton("barplotBtn2", "Maximum par arbre",
+      style = "opacity: .80; color: #fff; background-color: #a662e3;
+    border-color: #a153e5"
+    )
+  ),
+
+  absolutePanel(id = "plotyear", class = "panel panel-default", fixed = TRUE,
+    draggable = TRUE, top = 10, left = "auto", right = 20, bottom = "auto",
+    width = 330, height = "auto",
+    plotOutput("plotPerYear", height = 250),
+  ),
+
+  absolutePanel(id = "barplot1", class = "panel panel-default", fixed = TRUE,
+    draggable = TRUE, top = 260, left = "auto", right = 20, bottom = "auto",
+    width = 330, height = "auto",
+    plotOutput("plotHisto", height = 250),
+  ),
 
 
-    absolutePanel(id = "barplot2", class = "panel panel-default", fixed = TRUE,
-      draggable = TRUE, top = 510, left = "auto", right = 20, bottom = "auto",
-      width = 330, height = "auto",
-      plotOutput("plotHistoMax", height = 250),
-    ),
+  absolutePanel(id = "barplot2", class = "panel panel-default", fixed = TRUE,
+    draggable = TRUE, top = 510, left = "auto", right = 20, bottom = "auto",
+    width = 330, height = "auto",
+    plotOutput("plotHistoMax", height = 250),
+  ),
 
-    absolutePanel(id = "plotsiteyear", class = "panel panel-default",
+  absolutePanel(id = "plotsiteyear", class = "panel panel-default",
       fixed = TRUE, draggable = TRUE, top = 10, left = "auto",
       right = 350, bottom = "auto", width = 330, height = "auto",
       plotOutput("plotSitePerYear", height = 250),
-    ),
+  ),
 
-    absolutePanel(id = "plotsiteyearBAI", class = "panel panel-default",
+  absolutePanel(id = "plotsiteyearBAI", class = "panel panel-default",
       fixed = TRUE, draggable = TRUE, top = 260, left = "auto", right = 350,
       bottom = "auto", width = 330, height = "auto",
       plotOutput("plotSitePerYearBAI", height = 250),
-    ),
+  ),
 )
 
 
