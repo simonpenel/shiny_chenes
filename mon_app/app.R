@@ -55,7 +55,7 @@ ui <- bootstrapPage(
 
   absolutePanel( class = "panel panel-default", fixed = TRUE,
     draggable = TRUE, top = 180, left = 10, bottom = "auto",
-    width = 120, height = "auto",
+    width = 150, height = "auto",
     prettyCheckboxGroup("select_sites", "Sites",
       choices = sites, selected = sites, status = "primary"
     ),
