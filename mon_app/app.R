@@ -503,10 +503,10 @@ server <- function(input, output, session) {
   observe({
     leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
-      addMarkers(data = sumarizedData())  %>%
-      addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2),stroke= FALSE, label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Fruits_m2" )  %>%
+      addMarkers(label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2))  %>%
+      addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2),stroke= FALSE, group ="Fruits_m2" )  %>%
       #addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), dashArray = "50", label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
-      addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), fill = FALSE, label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
+      addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), fill = FALSE, group ="Croissance" )
   })
 
 
