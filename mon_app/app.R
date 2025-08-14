@@ -24,7 +24,7 @@ print(sites)
 # UI
 ui <- bootstrapPage(
   useShinyjs(),
-  
+
   tags$style(type = "text/css",
     "html, body {width:100%;height:100%}
     #plotyear { background-color: #ddd; opacity: 0.80;}
@@ -272,6 +272,9 @@ extract_mean_position <- function(site, data, mean_positions) {
 
 # Fonction d'affichage
 # --------------------
+
+# Graphe des valeurs moyenne par site pour chaque annee
+# ------------------------------------------------------
 plot_site_years_var <- function(df, var, main,
   ylab, type = "b", pch = 19, xlab = "Year", leg = TRUE, posleg = "topleft", ...
 ) {
@@ -305,100 +308,108 @@ plot_site_years_var <- function(df, var, main,
   xlim <- c(xmin_all - 3, xmax_all + 1)
 
   plot(site_data$Year, site_data[[var]], type = type, pch = pch, col = col[1],
-   xlim=xlim, ylim = ylim, xlab = xlab, ylab = ylab, main = main,
-   xaxp=c(xmin_all,xmax_all,xmax_all - xmin_all))
+    xlim = xlim, ylim = ylim, xlab = xlab, ylab = ylab, main = main,
+    xaxp = c(xmin_all, xmax_all, xmax_all - xmin_all)
+  )
 
   liste_sites <- c(unique(site_data$Site))
 
   if (nt > 1) {
-  for(j in 2:nt) {
-    site_data <-df[[j]]
-    site_data <-site_data[order(site_data$Year),,drop=FALSE]
-    points(site_data$Year, site_data[[var]], type = type, pch = pch, col = col[j])
-    liste_sites <- append(liste_sites, unique(site_data$Site))
+    for (j in 2:nt) {
+      site_data <- df[[j]]
+      site_data <- site_data[order(site_data$Year), , drop = FALSE]
+      points(site_data$Year, site_data[[var]], type = type, pch = pch, col = col[j])
+      liste_sites <- append(liste_sites, unique(site_data$Site))
+    }
   }
+  legend("topleft", legend = liste_sites, box.lty = 0,
+    col = col, lty = 1, cex = 0.8
+  )
+}
+
+
+# Graphe des valeurs  par arbre pour chaque annee
+# ------------------------------------------------------
+plot_years_var <- function(df, var, main, ylab, type = "b", pch = 19,
+  xlab = "Year", leg = TRUE, posleg = "topleft", ...
+) {
+  arbres <- unique(df$Arbre)
+  #arbres
+  nt   <- length(arbres)
+  col <- hcl.colors(nt, "Dark 2")
+  arbre <- df[df$Arbre == arbres[1], ]
+  ylim <- c(0, max(df[[var]]))
+  xlim <- c(min(df$Year) - 1, max(df$Year) + 1)
+  plot(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[1], xlim=xlim, ylim = ylim, xlab = xlab, ylab = ylab, main = main, ...)
+  for (j in 2:nt) {
+    arbre <- df[df$Arbre==arbres[j], ]
+    points(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[j])
   }
-  legend("topleft", legend=liste_sites,box.lty=0,
-       col=col, lty=1, cex=0.8)
 }
 
-
-# Plot of the  production along years
-plot_years_var <- function(df,var, main, ylab, type = "b", pch = 19,
-xlab = "Year", leg = TRUE, posleg = "topleft", ...){
-arbres = unique(df$Arbre)
-arbres
-nt   <- length(arbres)
-col <- hcl.colors(nt, "Dark 2")
-arbre <- df[df$Arbre==arbres[1],]
-ylim <- c(0, max(df[[var]]))
-xlim <- c(min(df$Year)-1, max(df$Year)+1)
-plot(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[1], xlim=xlim, ylim = ylim, xlab = xlab, ylab = ylab, main = main, ...)
-for(j in 2:nt) {
-arbre <- df[df$Arbre==arbres[j],]
-points(arbre$Year, arbre[[var]], type = type, pch = pch, col = col[j])
-}
-}
-
-
-# Plot barplot
+# Histograme
+# ----------
+# ( pas utilise)
 plot_barplot <- function(df, ...){
-  par(mar=c(8,4,1,1))
+  par(mar = c(8,4,1,1))
+  v_mean <- df$meanTotal_Fruits_per_m2
+  v_max <- df$maxTotal_Fruits_per_m2
+  meanmax <- matrix(c(v_mean,v_max), nc = 2, byrow = F)
 
-  #"v_mean = df$meantauxfructif
-  #v_max = df$maxtauxfructif
-
-  v_mean = df$meanTotal_Fruits_per_m2
-  v_max = df$maxTotal_Fruits_per_m2
-  meanmax = matrix(c(v_mean,v_max),nc=2, byrow=F)
-  #colnames(meanmax) = df$Arbre
-
-  #rownames(meanmax) <- c("Mean","Max")
-#barplot(meanmax,col=c(5:6),beside=T)
   barplot(df$meanTotal_Fruits_per_m2,names.arg=df$Arbre,las=2 )
 }
 
-plot_barplot_var <- function(df,var,main, ...){
-  par(mar=c(8,4,1,1))
-  barplot(df[[var]],names.arg=df$Arbre, las=2, main = main )
+# Histograme de la variable var pour chaque arbre
+# ----------------------------------------------
+plot_barplot_var <- function(df, var, main, ...) {
+  par(mar = c(8, 4, 1, 1))
+  barplot(df[[var]], names.arg = df$Arbre, las = 2, main = main )
 }
 
 
 # SERVER
+# ------
+
 server <- function(input, output, session) {
 
+
+  # boutons pour afficher/cacher les graphes
+
   observeEvent(input$plotBtn2, {
-    toggle('plotyear')
+    toggle("plotyear")
   })
 
   observeEvent(input$plotBtn1, {
-    toggle('plotsiteyear')
-    toggle('plotsiteyearBAI')
+    toggle("plotsiteyear")
+    toggle("plotsiteyearBAI")
   })
 
   observeEvent(input$barplotBtn1, {
-    toggle('barplot1')
+    toggle("barplot1")
   })
 
   observeEvent(input$barplotBtn2, {
-    toggle('barplot2')
+    toggle("barplot2")
   })
 
+  # selection des sites
+
   observeEvent(input$unselect_all, {
-  updateCheckboxGroupInput(session,"select_sites","Sites:",choices=sites)
+    updateCheckboxGroupInput(session, "select_sites", "Sites:", choices = sites)
   })
 
   observeEvent(input$select_all, {
-  updateCheckboxGroupInput(session,"select_sites","Sites:",choices=sites,selected=sites)
+    updateCheckboxGroupInput(session, "select_sites", "Sites:", choices = sites, selected = sites)
   })
 
+  # action sur la map
 
   output$map <- renderLeaflet({
     # Use leaflet() here, and only include aspects of the map that
     # won't need to change dynamically (at least, not unless the
     # entire map is being torn down and recreated).
     leaflet(filteredData()) %>%
-    addTiles(options = tileOptions(minZoom = 0, maxZoom = 25)) %>%
+      addTiles(options = tileOptions(minZoom = 0, maxZoom = 25)) %>%
 #    addGeoJSON(
 #        country_boundaries,
 #        opacity = 1,
@@ -407,25 +418,27 @@ server <- function(input, output, session) {
 #        color = "black",
 #        weight = 1
 #      )  %>%
-    addScaleBar(position = 'topleft') %>%
-    addMeasure(position = "topleft",
-    primaryLengthUnit = "meters",
-    secondaryLengthUnit = "kilometers",
-    primaryAreaUnit = "sqmeters",
-    secondaryAreaUnit = "hectares",
-    localization = "fr",
-    activeColor = "red",
-    completedColor = "red") %>%
+      addScaleBar(position = 'topleft') %>%
+      addMeasure(position = "topleft",
+        primaryLengthUnit = "meters",
+        secondaryLengthUnit = "kilometers",
+        primaryAreaUnit = "sqmeters",
+        secondaryAreaUnit = "hectares",
+        localization = "fr",
+        activeColor = "red",
+        completedColor = "red"
+      ) %>%
       addLayersControl(
-    overlayGroups = c("Fruits_m2","Croissance"),
-    options = layersControlOptions(collapsed = FALSE)
-  )  %>%
+        overlayGroups = c("Fruits_m2", "Croissance"),
+        options = layersControlOptions(collapsed = FALSE)
+      )  %>%
   # hideGroup("Croissance")%>%
-    fitBounds(~min(Longitude) - 0.001 , ~min(Latitude) - 0.001, ~max(Longitude) + 0.001 , ~max(Latitude) + 0.001)
+      fitBounds(~min(Longitude) - 0.001 , ~min(Latitude) - 0.001, ~max(Longitude) + 0.001 , ~max(Latitude) + 0.001)
   })
 
 
   # This will be used for the map.
+  # Donnees reduite a la periode et aux sites selectiones
   filteredData <- reactive({
     masting[masting$Year >= input$range[1]
     & masting$Year <= input$range[2]
@@ -433,6 +446,7 @@ server <- function(input, output, session) {
   })
 
   # This will be used for the map.
+  # Statistiques que les donnees reduite a la periode et aux sites selectiones
   sumarizedData <- reactive({
     get_summary(masting[
       masting$Year >= input$range[1]
@@ -442,20 +456,24 @@ server <- function(input, output, session) {
   })
 
   # This will be used for the map.
+  # Position moyenne des sites selectiones
+  # (pas utilise)
   positionData <- reactive({
     get_mean_positions_site(masting[masting$Site %in% input$select_sites, ])
   })
 
+  # This will be used for the map.
+  # Mise a jour de la taille des cercles
   scale_circle <- reactive({
     input$circle_size[1]
   })
 
-pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
+  # Echelle de couleur
+  pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate = "spline"), NULL)
 
-  echelle <- function(x){
-    print("X=")
-    print(x)
-    print(length(x))
+  # Fonction echelle
+  # (pas utilise)
+   echelle <- function(x){
     if (length(x) > 0)  {
       (scale_circle() - 1) * x + 1
     }
@@ -464,19 +482,20 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     }
   }
 
+  # Fonction echelle racine caree
+  # -----------------------------
   echelle_sqrt <- function(x) {
-    print("X=")
-    print(x)
     print(length(x))
-    if (length(x) > 0)  {
-      sqrt((scale_circle() - 1 ) * x )
+    if (length(x) > 0) {
+      sqrt((scale_circle() - 1) * x)
     }
     else {
       x
     }
   }
 
-
+  # Affichage des markers et des cercles sur la carte
+  # -------------------------------------------------
   observe({
     leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
@@ -487,7 +506,7 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
   })
 
 
-  # Output for the download
+  # Action download
   output$download <- downloadHandler(
     filename = function() {
       paste0("selected_data.csv")
@@ -498,62 +517,84 @@ pal <- colorNumeric(colorRamp(c("blue", "red"), interpolate="spline"),NULL)
     }
   )
 
-  # Output the plot
+  # Output  de plotPerYear
   output$plotPerYear <- renderPlot({
     data_plot <- select_in_map(input)
     if (nrow(data_plot) > 0) {
-    plot_years_var(data_plot,"Total_Fruits_per_m2","Nombre de fruits au m2 au cours du temps","Nombre de fruits au m2")
-  }
+      plot_years_var(
+        data_plot,
+        "Total_Fruits_per_m2",
+        "Nombre de fruits au m2 au cours du temps",
+        "Nombre de fruits au m2"
+      )
+    }
   })
 
-  # Output the plot
+  # Output de plotSitePerYear
   output$plotSitePerYear <- renderPlot({
-    data_plot <-filteredData()
+    data_plot <- filteredData()
     if (nrow(data_plot) > 0) {
-
-      toto <- get_summary_site(data_plot,"Total_Fruits_per_m2")
-      plot_site_years_var(toto,"Moyenne_sur_les_arbres", "Nb de fruit par m2 (moyenne par site)", "Nb de fruit par m2")
-  }
+      toto <- get_summary_site(data_plot, "Total_Fruits_per_m2")
+      plot_site_years_var(
+        toto,
+        "Moyenne_sur_les_arbres",
+        "Nb de fruit par m2 (moyenne par site)",
+        "Nb de fruit par m2"
+      )
+    }
   })
 
-  # Output the plot
+  # Output de plotSitePerYearBAI 
   output$plotSitePerYearBAI <- renderPlot({
-    data_plot <-filteredData()
+    data_plot <- filteredData()
     if (nrow(data_plot) > 0) {
-
-      toto <- get_summary_site(data_plot,"BAI")
-      plot_site_years_var(toto,"Moyenne_sur_les_arbres", "croissance terriere (moyenne par site)", "BAI")
-  }
+      toto <- get_summary_site(data_plot, "BAI")
+      plot_site_years_var(
+        toto,
+        "Moyenne_sur_les_arbres", 
+        "croissance terriere (moyenne par site)", 
+        "BAI"
+      )
+    }
   })
 
-  # Output the plot
+  # Output de plotHisto
   output$plotHisto <- renderPlot({
     data_plot <- sumarizedData()
     if (nrow(data_plot) > 0) {
-      plot_barplot_var(data_plot,"meanTotal_Fruits_per_m2", "Nombre de fruits au m2 moyen par arbre")
-  }
+      plot_barplot_var(
+        data_plot,
+        "meanTotal_Fruits_per_m2",
+        "Nombre de fruits au m2 moyen par arbre"
+      )
+    }
   })
 
-  # Output the plot
+  # Output de plotHistoMax
   output$plotHistoMax <- renderPlot({
     data_plot <- sumarizedData()
     if (nrow(data_plot) > 0) {
-      plot_barplot_var(data_plot,"maxTotal_Fruits_per_m2","Nombre de fruits au m2 maximum par arbre")
-  }
+      plot_barplot_var(
+        data_plot,
+        "maxTotal_Fruits_per_m2",
+        "Nombre de fruits au m2 maximum par arbre"
+      )
+    }
   })
 
 
-  output$lat <- renderPrint({
-      input$lat
-    })
+  # output$lat <- renderPrint({
+  #     input$lat
+  #   })
 
-    output$long <- renderPrint({
-      input$long
-    })
+  #   output$long <- renderPrint({
+  #     input$long
+  #   })
 
-    output$geolocation <- renderPrint({
-      input$geolocation
-    })
+  #   output$geolocation <- renderPrint({
+  #     input$
+  
+  
 }
 
 shinyApp(ui, server)
