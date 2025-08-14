@@ -528,7 +528,7 @@ server <- function(input, output, session) {
       plot_years_var(
         data_plot,
         "Total_Fruits_per_m2",
-        "Nb de fruits au m2 au cours du temps",
+        "Nb de fruits au m2 au cours du temps\n(arbres visible sur la carte)",
         "Nb de fruits au m2"
       )
     }
