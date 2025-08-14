@@ -70,33 +70,35 @@ ui <- bootstrapPage(
 
     ),
 
+
+    fixedPanel(bottom = 10, right = 500,
+      actionButton("plotBtn1", "Graphes par site",
+        style = "opacity: .80; color: #fff; background-color: #a662e3;
+        border-color: #a153e5"
+      )
+    ),
+
     fixedPanel(bottom = 10, right = 350,
-      actionButton("plotBtn2", "Show/Hide Plot 2",
+      actionButton("plotBtn2", "Graphe par arbre",
         style = "opacity: .80; color: #fff; background-color: #a662e3;
         border-color: #a153e5"
       )
     ),
 
     fixedPanel(bottom = 10, right = 180,
-      actionButton("barplotBtn1", "Show/Hide Barplot 1",
+      actionButton("barplotBtn1", "Moyenne par arbre",
         style = "opacity: .80; color: #fff; background-color: #a662e3;
         border-color: #a153e5"
       )
     ),
 
     fixedPanel(bottom = 10, right = 10,
-      actionButton("barplotBtn2", "Show/Hide Barplot 2",
+      actionButton("barplotBtn2", "Maximum par arbre",
         style = "opacity: .80; color: #fff; background-color: #a662e3;
         border-color: #a153e5"
       )
     ),
 
-    fixedPanel(bottom = 10, right = 500,
-      actionButton("plotBtn1", "Show/Hide Plot 1",
-        style = "opacity: .80; color: #fff; background-color: #a662e3;
-        border-color: #a153e5"
-      )
-    ),
 
 
     absolutePanel(id = "plotyear", class = "panel panel-default", fixed = TRUE,
@@ -594,7 +596,7 @@ server <- function(input, output, session) {
   #   output$geolocation <- renderPrint({
   #     input$
   
-  
+
 }
 
 shinyApp(ui, server)
