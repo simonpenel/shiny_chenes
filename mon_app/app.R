@@ -17,6 +17,12 @@ masting <- read.csv("merged.csv",sep=";")
 sites <-unique(masting$Site)
 print(sites)
 
+# Creation d'icones (pas utilise pur l'instant)
+icon_list <- iconList(
+icon1 = makeIcon("icon1.png", iconWidth = 30, iconAnchorX = -1, iconAnchorY = 50),
+icon2 = makeIcon("icon2.png", iconWidth = 50)
+)
+
 #country_boundaries <- read_json("reserves-naturelles-regionales-rnr.geojson")
 #country_boundaries <- read_json("Parcs_naturels_regionaux_de_France.geojson")
 #country_boundaries <- read_json("onf_forets-publiques.json")
@@ -500,7 +506,15 @@ server <- function(input, output, session) {
   observe({
     leafletProxy("map", data = sumarizedData()) %>%
       clearShapes() %>%
-      addMarkers(label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>taux fructif moyen = ",meantauxfructif,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2))  %>%
+      addMarkers(label = ~paste(" ", Arbre),
+        popup = ~paste(
+          Arbre,
+          ":<br>croissance terriere moyenne = ",meanBAI,
+          "<br>taux fructif moyen = ",meantauxfructif,
+          "<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2
+        ),
+      #icon = ~icon_list["icon1"]
+      )  %>%
       addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2),stroke= FALSE, group ="Fruits_m2" )  %>%
       #addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), dashArray = "50", label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
       addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), fill = FALSE, group ="Croissance" )
