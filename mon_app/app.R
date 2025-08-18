@@ -369,8 +369,9 @@ plot_barplot <- function(df, ...){
 # Histograme de la variable var pour chaque arbre
 # ----------------------------------------------
 plot_barplot_var <- function(df, var, main, ...) {
+  max_bar <- max(df[[var]])
   par(mar = c(8, 4, 1, 1))
-  barplot(df[[var]], names.arg = df$Arbre, las = 2, main = main )
+  barplot(df[[var]], names.arg = df$Arbre, las = 2, main = main, col=ifelse(df[[var]] == max_bar,"red","blue")  )
 }
 
 
