@@ -27,6 +27,9 @@ icon2 = makeIcon("icon2.png", iconWidth = 50)
 #country_boundaries <- read_json("Parcs_naturels_regionaux_de_France.geojson")
 #country_boundaries <- read_json("onf_forets-publiques.json")
 
+
+
+
 # UI
 ui <- bootstrapPage(
   useShinyjs(),
@@ -116,14 +119,16 @@ ui <- bootstrapPage(
   absolutePanel(id = "barplot1", class = "panel panel-default", fixed = TRUE,
     draggable = TRUE, top = 260, left = "auto", right = 20, bottom = "auto",
     width = 330, height = "auto",
-    plotOutput("plotHisto", height = 250),
+    plotOutput("plotHisto", height = 220,click = "plot_click_mean"),
+    verbatimTextOutput("info_mean"),
   ),
 
 
   absolutePanel(id = "barplot2", class = "panel panel-default", fixed = TRUE,
     draggable = TRUE, top = 510, left = "auto", right = 20, bottom = "auto",
     width = 330, height = "auto",
-    plotOutput("plotHistoMax", height = 250),
+    plotOutput("plotHistoMax", height = 220, click = "plot_click_max"),
+    verbatimTextOutput("info_max"),
   ),
 
   absolutePanel(id = "plotsiteyear", class = "panel panel-default",
@@ -366,6 +371,20 @@ plot_barplot <- function(df, ...){
   barplot(df$meanTotal_Fruits_per_m2,names.arg=df$Arbre,las=2 )
 }
 
+
+# Histograme
+# ----------
+# ( pas utilise)
+plot_barplot_bidon <- function(df, ...){
+  par(mar = c(8,4,1,1))
+  v_mean <- df$meanTotal_Fruits_per_m2
+  v_max <- df$maxTotal_Fruits_per_m2
+  meanmax <- matrix(c(v_mean,v_max), nc = 2, byrow = F)
+
+  barplot(df$meanTotal_Fruits_per_m2,names.arg=df$Arbre,las=2,plot = FALSE)
+}
+
+
 # Histograme de la variable var pour chaque arbre
 # ----------------------------------------------
 plot_barplot_var <- function(df, var, main, ...) {
@@ -578,7 +597,7 @@ server <- function(input, output, session) {
   output$plotHisto <- renderPlot({
     data_plot <- sumarizedData()
     if (nrow(data_plot) > 0) {
-      plot_barplot_var(
+      histo <<- plot_barplot_var(
         data_plot,
         "meanTotal_Fruits_per_m2",
         "Nb de fruits au m2 moyen par arbre"
@@ -590,13 +609,41 @@ server <- function(input, output, session) {
   output$plotHistoMax <- renderPlot({
     data_plot <- sumarizedData()
     if (nrow(data_plot) > 0) {
-      plot_barplot_var(
+      histo <<- plot_barplot_var(
         data_plot,
         "maxTotal_Fruits_per_m2",
         "Nb de fruits au m2 maximum par arbre"
       )
     }
   })
+
+
+  output$info_mean <- renderPrint({
+    req(input$plot_click_mean)
+    data_plot <- sumarizedData()
+
+    x <- round(input$plot_click_mean$x, 2)
+    whisto = histo[2] - histo[1]
+    for (idx_h in 1:(nrow(histo))) {
+      if ((histo[idx_h] - whisto/2   <= x) &&   ( x <= histo[idx_h] + whisto / 2 )) {
+        print(data_plot$Arbre[idx_h])
+      }
+    }
+  })
+
+  output$info_max <- renderPrint({
+    req(input$plot_click_max)
+    data_plot <- sumarizedData()
+
+    x <- round(input$plot_click_max$x, 2)
+    whisto = histo[2] - histo[1]
+    for (idx_h in 1:(nrow(histo))) {
+      if ((histo[idx_h] - whisto/2   <= x) &&   ( x <= histo[idx_h] + whisto / 2 )) {
+        print(data_plot$Arbre[idx_h])
+      }
+    }
+  })
+
 
 
   # output$lat <- renderPrint({
