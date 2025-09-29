@@ -437,14 +437,14 @@ server <- function(input, output, session) {
     # entire map is being torn down and recreated).
     leaflet(filteredData()) %>%
       addTiles(options = tileOptions(minZoom = 0, maxZoom = 25)) %>%
-#    addGeoJSON(
-#        country_boundaries,
-#        opacity = 1,
-#        dashArray = "9",
-#        fillOpacity = 0.5,
-#        color = "black",
-#        weight = 1
-#      )  %>%
+  #  addGeoJSON(
+  #      country_boundaries,
+  #      opacity = 1,
+  #      dashArray = "9",
+  #      fillOpacity = 0.5,
+  #      color = "black",
+  #      weight = 1
+  #    )  %>%
       addScaleBar(position = 'topleft') %>%
       addMeasure(position = "topleft",
         primaryLengthUnit = "meters",
