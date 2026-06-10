@@ -17,9 +17,41 @@ masting <- read.csv("merged.csv",sep=";")
 sites <-unique(masting$Site)
 print(sites)
 
-url <- "http://localhost:3000/api/lieux"
-geojson <- jsonlite::fromJSON(url)
-print(geojson)
+# a tester
+# library(httr)
+
+# res <- RETRY(
+#     "GET",
+#     url = "https://api.ibb.gov.tr/ispark/Park",
+#     timeout(30),
+#     times = 5
+# )
+
+# res <- fromJSON(content(res, as = "text"))
+
+url <- "http://localhost:3000/api/arbres"
+geojson <- jsonlite::fromJSON(url,
+  simplifyVector = TRUE,
+  simplifyDataFrame = TRUE)
+print("DEBUG GEOJSON =")
+gdf <- geojson$features
+print(geojson$features)
+print(gdf)
+print("LATT")
+print(gdf$geometry$coordinates)
+new_df <- data.frame(
+  arbre = gdf$propertie$nom,
+  site = gdf$propertie$nom_site,
+  latitude  =sapply(gdf$geometry$coordinates, `[`, 2),
+  longitude  =sapply(gdf$geometry$coordinates, `[`, 2),
+  year = gdf$propertie$annee
+)
+
+print(new_df)
+
+print("DEBUG MASTING =")
+#print(masting)
+testdf <- data.frame(name = c("Site","Arbre","Methode", "Longitude","Latitude","Altitude", "Year") )
 print("type")
 print(geojson$type)
 print("features")
@@ -40,15 +72,15 @@ test_geo <- lapply(
   )
 print(test_geo)  
 # obj <- st_read(geojson)
-var pointLayer = L.geoJSON(null, {
-  pointToLayer: function(feature,latlng){
-    label = String(feature.properties.name) 
-    return new L.CircleMarker(latlng, {
-      radius: 1,
-    }).bindTooltip(label, {permanent: true, opacity: 0.7}).openTooltip();
-    }
-  })
-pointLayer.addData(geojson)
+# var pointLayer = L.geoJSON(null, {
+#   pointToLayer: function(feature,latlng){
+#     label = String(feature.properties.name) 
+#     return new L.CircleMarker(latlng, {
+#       radius: 1,
+#     }).bindTooltip(label, {permanent: true, opacity: 0.7}).openTooltip();
+#     }
+#   })
+# pointLayer.addData(geojson)
 
 # res_geojson <- fetch('http://localhost:3000/api/lieux')
   # .then(r => r.json())
@@ -493,7 +525,7 @@ server <- function(input, output, session) {
   observe({
     session$sendCustomMessage(
       "loadData",
-      "http://localhost:3000/api/lieux"
+      "http://localhost:3000/api/arbres"
     )
   })
 
@@ -612,7 +644,8 @@ server <- function(input, output, session) {
       addCircles(radius = ~echelle_sqrt(meanTotal_Fruits_per_m2), color = ~pal(meanTotal_Fruits_per_m2),stroke= FALSE, group ="Fruits_m2" )  %>%
       #addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), dashArray = "50", label = ~paste(" ", Arbre), popup = ~paste(Arbre, ":<br>croissance terriere moyenne = ",meanBAI,"<br>nb moyen de fruits par m2 = ",meanTotal_Fruits_per_m2), group ="Croissance" )
       addCircles(radius = ~echelle_sqrt(meanBAI), color = ~pal(meanBAI), fill = FALSE, group ="Croissance" )%>%
-      addGeoJSON(input$geojson_data)
+      addGeoJSON(input$geojson_data) 
+      # clusterOptions = markerClusterOptions()
   })
 
 
