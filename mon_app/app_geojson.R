@@ -42,7 +42,7 @@ print(gdf$geometry$coordinates)
 new_df <- data.frame(
   arbre = gdf$propertie$nom,
   site = gdf$propertie$nom_site,
-  latitude  =sapply(gdf$geometry$coordinates, `[`, 2),
+  latitude  =sapply(gdf$geometry$coordinates, `[`, 1),
   longitude  =sapply(gdf$geometry$coordinates, `[`, 2),
   year = gdf$propertie$annee
 )
